@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="AutomeasUI.View.ConfigBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Section="clr-namespace:AutomeasToolkit.Basic.ExpandableSection;assembly=AutomeasToolkit"
+             Name="Root"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <ScrollViewer VerticalScrollBarVisibility="Visible">
+        <Grid>
+            <StackPanel Orientation="Vertical">
+                <Expander Header="Typ Ruchu">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Height="30" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="0.2*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Section:TitledListCollumn Grid.Column="0"
+                                                       Items="{Binding TypRuchu.Item1, ElementName=Root}" />
+                            <Section:TitledListCollumn Grid.Column="2"
+                                                       Items="{Binding TypRuchu.Item2, ElementName=Root}" />
+                        </Grid>
+                    </StackPanel>
+
+                </Expander>
+                <Expander Header="Pomiary">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Height="30" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="0.2*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Section:TitledListCollumn Grid.Column="0"
+                                                       Items="{Binding Pomiary.Item1, ElementName=Root}" />
+                            <Section:TitledListCollumn Grid.Column="2"
+                                                       Items="{Binding Pomiary.Item2, ElementName=Root}" />
+                        </Grid>
+                    </StackPanel>
+
+                </Expander>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

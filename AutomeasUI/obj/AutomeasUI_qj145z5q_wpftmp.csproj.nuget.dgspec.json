@@ -1,0 +1,156 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasUI\\AutomeasUI.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj",
+        "projectName": "AutomeasAsyncCommunication",
+        "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj",
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {}
+      }
+    },
+    "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasToolkit\\AutomeasToolkit.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasToolkit\\AutomeasToolkit.csproj",
+        "projectName": "AutomeasToolkit",
+        "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasToolkit\\AutomeasToolkit.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasToolkit\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0-windows"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0-windows7.0": {
+            "targetAlias": "net6.0-windows",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0-windows7.0": {
+          "targetAlias": "net6.0-windows",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasUI\\AutomeasUI.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasUI\\AutomeasUI.csproj",
+        "projectName": "AutomeasUI",
+        "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasUI\\AutomeasUI.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasUI\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0-windows"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0-windows7.0": {
+            "targetAlias": "net6.0-windows",
+            "projectReferences": {
+              "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj": {
+                "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj"
+              },
+              "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasToolkit\\AutomeasToolkit.csproj": {
+                "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasToolkit\\AutomeasToolkit.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0-windows7.0": {
+          "targetAlias": "net6.0-windows",
+          "dependencies": {
+            "CommunityToolkit.Mvvm": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "System.IO.Ports": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
