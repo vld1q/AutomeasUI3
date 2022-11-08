@@ -385,6 +385,19 @@
         "frameworkReferences": [
           "Microsoft.WindowsDesktop.App.WPF"
         ]
+      },
+      "PseudoassemblyLanguage/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/PseudoassemblyLanguage.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/PseudoassemblyLanguage.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.WindowsDesktop.App.WPF"
+        ]
       }
     }
   },
@@ -1006,6 +1019,11 @@
       "type": "project",
       "path": "../AutomeasToolkit/AutomeasToolkit.csproj",
       "msbuildProject": "../AutomeasToolkit/AutomeasToolkit.csproj"
+    },
+    "PseudoassemblyLanguage/1.0.0": {
+      "type": "project",
+      "path": "../PseudoassemblyLanguage/PseudoassemblyLanguage.csproj",
+      "msbuildProject": "../PseudoassemblyLanguage/PseudoassemblyLanguage.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -1014,6 +1032,7 @@
       "AutomeasToolkit >= 1.0.0",
       "CommunityToolkit.Mvvm >= 8.0.0",
       "LiveChartsCore.SkiaSharpView.WPF >= 2.0.0-beta.516",
+      "PseudoassemblyLanguage >= 1.0.0",
       "System.IO.Ports >= 6.0.0"
     ]
   },
@@ -1049,6 +1068,9 @@
             },
             "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasToolkit\\AutomeasToolkit.csproj": {
               "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasToolkit\\AutomeasToolkit.csproj"
+            },
+            "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj": {
+              "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj"
             }
           }
         }

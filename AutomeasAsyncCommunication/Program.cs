@@ -96,6 +96,7 @@ namespace AutomeasAsyncCommunication
             for (var i = 0; i < numberOfMeasurements; i++) result[i] = SingularMeasurement(mcu);
             return result;
         }
+        
 
         private static double? SingularMeasurement(Mcu mcu)
         {

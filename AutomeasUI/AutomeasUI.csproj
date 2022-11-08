@@ -16,6 +16,7 @@
     <ItemGroup>
         <ProjectReference Include="..\AutomeasAsyncCommunication\AutomeasAsyncCommunication.csproj" />
         <ProjectReference Include="..\AutomeasToolkit\AutomeasToolkit.csproj" />
+        <ProjectReference Include="..\PseudoassemblyLanguage\PseudoassemblyLanguage.csproj" />
     </ItemGroup>
 
 </Project>

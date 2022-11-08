@@ -5,6 +5,7 @@ using System.Windows;
 using AutomeasAsyncCommunication;
 using AutomeasToolkit.Basic.TitledList;
 using AutomeasUI.DevConfig;
+using AutomeasUI.ViewModel;
 
 namespace AutomeasUI;
 
@@ -23,6 +24,7 @@ public partial class MainWindow : Window
     public Tuple<ObservableCollection<TitledList>, ObservableCollection<TitledList>> TypRuchu { get; set; } = new
         (ConfigBar.Collumns["TypRuchuLeft"], ConfigBar.Collumns["TypRuchuRight"]);
 
+    public DashboardViewModel DashboardViewModel { get; set; }= new();
     private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
     {
         Task.Run(() =>

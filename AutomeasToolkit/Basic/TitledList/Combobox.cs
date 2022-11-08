@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace AutomeasToolkit.Basic.TitledList;
 
@@ -11,6 +12,10 @@ public partial class Combobox : TitledList
     private ObservableCollection<string> _content;
     private int _index;
 
+    public string GetValue()
+    {
+        return Content[Index];
+    }
     public Combobox(ObservableCollection<string> content, int index = 0, string name = "") : base("combo", name)
     {
         _content = content;

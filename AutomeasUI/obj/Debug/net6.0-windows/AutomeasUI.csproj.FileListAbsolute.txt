@@ -54,3 +54,5 @@ C:\Users\Admin\RiderProjects\AutomeasAsyncCommunication\AutomeasUI\bin\Debug\net
 C:\Users\Admin\RiderProjects\AutomeasAsyncCommunication\AutomeasUI\bin\Debug\net6.0-windows\runtimes\win-x64\native\libSkiaSharp.dll
 C:\Users\Admin\RiderProjects\AutomeasAsyncCommunication\AutomeasUI\bin\Debug\net6.0-windows\runtimes\win-x86\native\libSkiaSharp.dll
 C:\Users\Admin\RiderProjects\AutomeasAsyncCommunication\AutomeasUI\obj\Debug\net6.0-windows\View\DashboardView.baml
+C:\Users\Admin\RiderProjects\AutomeasAsyncCommunication\AutomeasUI\bin\Debug\net6.0-windows\PseudoassemblyLanguage.dll
+C:\Users\Admin\RiderProjects\AutomeasAsyncCommunication\AutomeasUI\bin\Debug\net6.0-windows\PseudoassemblyLanguage.pdb

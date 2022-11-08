@@ -12,6 +12,7 @@
           "AutomeasToolkit": "1.0.0",
           "CommunityToolkit.Mvvm": "8.0.0",
           "LiveChartsCore.SkiaSharpView.WPF": "2.0.0-beta.516",
+          "PseudoassemblyLanguage": "1.0.0",
           "System.IO.Ports": "6.0.0"
         },
         "runtime": {
@@ -275,6 +276,11 @@
         "runtime": {
           "AutomeasToolkit.dll": {}
         }
+      },
+      "PseudoassemblyLanguage/1.0.0": {
+        "runtime": {
+          "PseudoassemblyLanguage.dll": {}
+        }
       }
     }
   },
@@ -451,6 +457,11 @@
       "sha512": ""
     },
     "AutomeasToolkit/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "PseudoassemblyLanguage/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

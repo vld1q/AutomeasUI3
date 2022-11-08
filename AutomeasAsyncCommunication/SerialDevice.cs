@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading;
@@ -101,7 +102,33 @@ namespace AutomeasAsyncCommunication
             Thread.Sleep(1500);
             if (response == "done") Console.WriteLine("MOVE RIGHT SUCCESSFUL");*/
         }
+        public void Cycle(List<byte[]> exe)
+        {
+            Port.DiscardInBuffer();
+            Port.DiscardOutBuffer();
+            var b = exe[0];
+            Port.Write(b, 0, 2);
+            var v = Port.ReadLine();
+            if (v != "y") throw new NotImplementedException();
 
+            b = exe[1];
+            Port.Write(b, 0, 2);
+            v = Port.ReadLine();
+            if (v != "y") throw new NotImplementedException();
+            b = StringToByteArray("0001");
+            Port.Write(b, 0, 2);
+            v = Port.ReadLine();
+            if (v != "y") throw new NotImplementedException();
+            /*Port.WriteLine("l065x\0");
+            while(response != "done") 
+                response = Port.ReadLine();
+            Thread.Sleep(1500);
+            if (response == "done") Console.WriteLine("MOVE LEFT SUCCESSFUL");
+            SendRequest("r075x");
+            response = GetResponse();
+            Thread.Sleep(1500);
+            if (response == "done") Console.WriteLine("MOVE RIGHT SUCCESSFUL");*/
+        }
         public static byte[] StringToByteArray(string hex)
         {
             return Enumerable.Range(0, hex.Length)

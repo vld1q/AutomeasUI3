@@ -17,7 +17,7 @@
         </Grid>
         
         <Grid Grid.Column="1">
-            <view:DashboardView/> 
+            <view:DashboardView DataContext="{Binding DashboardViewModel, ElementName=Root}"/> 
         </Grid>
     </Grid>
 </Window>
