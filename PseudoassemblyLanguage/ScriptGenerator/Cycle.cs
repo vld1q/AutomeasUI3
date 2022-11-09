@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
 using PseudoassemblyLanguage.Parser;
-
+/* (co)-written by:
+ * Kordian Czyżewski
+ */
 namespace PseudoassemblyLanguage.ScriptGenerator;
-
+/// <summary>
+/// Generates regular cycle (same step all the way)
+/// </summary>
 public static class Cycle
 {
     public static string Step = "full";

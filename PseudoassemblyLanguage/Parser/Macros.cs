@@ -1,11 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+/* (co)-written by:
+ * Kordian Czyżewski
+ */
 namespace PseudoassemblyLanguage.Parser;
-
+/// <summary>
+/// Pseudoassembly to hex translator
+/// </summary>
 public class Macros
 {
+    /// <summary>
+    /// Translates step names into corresponding pin configurations
+    /// Provided command type is some kind of move, those 4 bits are directly mapped onto MCU outputs
+    /// M3,M2,M1 (three oldest bits) configure step type
+    /// Youngest bit determines direction. By default all moves are counter-clockwise.
+    /// In order to change direction value obtained from dictionary has to be incremented by one
+    /// <example>
+    /// for step 1/4:
+    ///     0x6 = move left
+    ///     0x7 = move right
+    /// </example>
+    /// </summary>
     internal readonly Dictionary<string, int> Keyword = new()
     {
         { "full", 0x2 },
@@ -17,16 +33,37 @@ public class Macros
         { "1/32", 0xE },
         { "pause", 0x0 }
     };
-
+    /// <summary>
+    /// determines instruction type.
+    /// overall syntax is [type: 4bit][arg1: 4bit][arg2: 8bit]
+    /// <example>
+    ///  mv half 75r
+    ///  hlt
+    ///  mvs 1/32 25l
+    /// </example>
+    /// </summary>
     internal readonly Dictionary<string, int> PseoudoAsmMnemonic = new()
     {
         { "mv", 0x0 },
         { "mvs", 0x1 },
         { "hlt", 0xF }
     };
-
+    /// <summary>
+    /// Function merges two half-bytes into one word (8bit)
+    /// Applicable only for movement type command
+    /// 
+    /// Target is 8bit AVR MCU. (ATmega328P in particular) so the word is one byte (8 bits)
+    /// Opcode consists of two words, first word is separated into two half-bytes
+    /// </summary>
+    /// <param name="commandId"> Determines command type, determined by <c>PseudoAsmMnemonic</c> </param>
+    /// <param name="movementMode"> Determines movement mode, determined by <c>Keyword</c></param>
+    /// <returns></returns>
     private int GetFirstOpcodeWord(int commandId, int movementMode) => (commandId << 4) | movementMode;
-
+    /// <summary>
+    /// Translate one command (string terminated with ";") into 2byte opcode
+    /// </summary>
+    /// <param name="chunk"> Command</param>
+    /// <returns>byte[2]</returns>
     public byte[] parseChunk(string chunk)
     {
         int result;
@@ -61,7 +98,11 @@ public class Macros
             return bb;
         }
     }
-
+    /// <summary>
+    /// Translates sets of commands (ie. program) into list of corresponding opcodes
+    /// </summary>
+    /// <param name="line"> program or set of commands to be translated</param>
+    /// <returns> list of byte[2]</returns>
     public List<byte[]> parseLine(string line)
     {
         List<byte[]> result = new();
