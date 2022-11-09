@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using AutomeasToolkit.Basic.TitledList;
 
 namespace AutomeasUI.DevConfig;
-
 public static class ConfigBar
 {
     public static Dictionary<string, ObservableCollection<TitledList>> Collumns { get; set; } = new()
