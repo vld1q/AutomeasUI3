@@ -93,25 +93,32 @@ namespace AutomeasAsyncCommunication
             var result = new ObservableCollection<double?>();
             for (var i = 0; i < numberOfMeasurements; i++) result.Add(null);
 
-            for (var i = 0; i < numberOfMeasurements; i++) result[i] = SingularMeasurement(mcu);
+            //for (var i = 0; i < numberOfMeasurements; i++) result[i] = SingularMeasurement(mcu);
             return result;
         }
         
 
-        private static double? SingularMeasurement(Mcu mcu)
+        public static double? SingularMeasurement(Gauge gauge, MeasurementType meas)
         {
+            //gauge.Port.DiscardInBuffer();
+            //gauge.Port.DiscardOutBuffer();
+            //Thread.Sleep(500);
             double? result = null;
-            mcu.Cycle();
-            var res = "D-= 1.314 Dbm"; //gauge.GetMeasurement(MeasurementType.IlMeasDbm);
+            var res = gauge.GetMeasurement(meas); //gauge.GetMeasurement(MeasurementType.IlMeasDbm);
             {
                 // obtain value
-                var array = res.Split(' ');
-                if (array.Length != 3)
+                var array = res.Split('-');
+                array = array[1].Split(' ');
+                if (array[0] == "")
                 {
-                    throw new Exception("Got invalid result");
+                    array[0] = array[1];
+                }
+                if (array.Length < 2)
+                {
+                    return null;
                 }
 
-                res = array[1];
+                res = array[0].Substring(0, array[0].Length-"dBr".Length);
                 result = Convert.ToDouble(res, CultureInfo.InvariantCulture);
             }
             return result;

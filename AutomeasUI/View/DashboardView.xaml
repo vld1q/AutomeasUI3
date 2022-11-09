@@ -15,7 +15,7 @@
             <RowDefinition Height="0.2*"/>
         </Grid.RowDefinitions>
         <lvc:CartesianChart
-            Series="{Binding Series}"
+            Series="{Binding Series, Mode=TwoWay}"
             YAxes="{Binding YAxes}"
             DrawMarginFrame="{Binding Frame}">
         </lvc:CartesianChart>

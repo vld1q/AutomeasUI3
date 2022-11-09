@@ -138,7 +138,7 @@ namespace AutomeasAsyncCommunication
         }
     }
 
-    internal class Gauge : SerialDevice
+    public class Gauge : SerialDevice
     {
         private const string IntToCommand = "BRA3_5";
 
