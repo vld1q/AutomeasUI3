@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "Hye9QxdruKO9/GJ2Uch6LIhcFGD4raEfTCPX8rOsdnqNaohY4Tq/AScNugbFIh4IgaKavNh7B0FgnvTJVQ6VGg==",
+  "dgSpecHash": "UU5JJ090ad+UcRqXNtxT+5TboNgZ2w30m3NKkH1a1Qg9XVNLKVTPIMYt7BDmiu+xcGicrHKyJUykUvRoJaAlsQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Admin\\RiderProjects\\AutomeasAsyncCommunication\\AutomeasToolkit\\AutomeasToolkit.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasToolkit\\AutomeasToolkit.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Kczyz\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.12\\microsoft.netcore.app.ref.6.0.12.nupkg.sha512",
+    "C:\\Users\\Kczyz\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.12\\microsoft.windowsdesktop.app.ref.6.0.12.nupkg.sha512",
+    "C:\\Users\\Kczyz\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.12\\microsoft.aspnetcore.app.ref.6.0.12.nupkg.sha512"
+  ],
   "logs": []
 }

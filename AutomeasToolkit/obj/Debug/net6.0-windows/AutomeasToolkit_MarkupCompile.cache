@@ -4,7 +4,7 @@
 library
 C#
 .cs
-C:\Users\Admin\RiderProjects\AutomeasAsyncCommunication\AutomeasToolkit\obj\Debug\net6.0-windows\
+C:\Users\Kczyz\RiderProjects\AutomeasUI\AutomeasToolkit\obj\Debug\net6.0-windows\
 AutomeasToolkit
 none
 false
@@ -13,7 +13,7 @@ TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 5-1236719769
 
 1277902052
-194-200944676
+194-1345867986
 Basic\ExpandableSection\Section.xaml;Basic\ExpandableSection\TitledListCollumn.xaml;Basic\TitledList\TitledCheckboxList.xaml;Basic\TitledList\TitledComboList.xaml;Basic\TitledList\TitledPList.xaml;
 
 False

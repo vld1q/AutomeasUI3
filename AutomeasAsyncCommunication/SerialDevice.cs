@@ -9,7 +9,7 @@ namespace AutomeasAsyncCommunication
     public abstract class SerialDevice
     {
         public readonly SerialPort Port;
-
+        protected bool IsDeactivated = false;
         public SerialDevice(string port, int baudrate)
         {
             Port = new SerialPort();
@@ -25,6 +25,12 @@ namespace AutomeasAsyncCommunication
                 //_port.WriteTimeout = 500;
             }
         }
+        /// <summary>
+        /// Make device not accept instructions.
+        /// </summary>
+        public void Deactivate()
+        {
+            this.IsDeactivated = true;}
 
         public static SerialDevice operator ++(SerialDevice self)
         {
@@ -46,8 +52,19 @@ namespace AutomeasAsyncCommunication
                 throw new NotSupportedException("Port is not open");
         }
 
+        public string SendSafeRequest(string msg)
+        {
+            if (Port.IsOpen)
+                Port.WriteLine(msg);
+            string response = Port.ReadLine();
+            if (response!="") return response;
+            else
+                throw new NotSupportedException("Port is not open");
+        }
+
         public string GetResponse()
         {
+            
             string result;
             try
             {
@@ -72,6 +89,10 @@ namespace AutomeasAsyncCommunication
 
         public void Cycle()
         {
+            if (IsDeactivated)
+            {
+                return;
+            }
             Port.DiscardInBuffer();
             Port.DiscardOutBuffer();
             var response = "";
@@ -104,6 +125,10 @@ namespace AutomeasAsyncCommunication
         }
         public void Cycle(List<byte[]> exe)
         {
+            if (IsDeactivated)
+            {
+                return;
+            }
             Port.DiscardInBuffer();
             Port.DiscardOutBuffer();
             var b = exe[0];
@@ -159,6 +184,28 @@ namespace AutomeasAsyncCommunication
             Port.Open();
         }
 
+        private string ParseMeasurement_MakeNumeric(string measurement, Program.MeasurementType mMode)
+        {
+            string result = "";
+            int prefix, postfix;
+            switch (mMode)
+            {
+                case Program.MeasurementType.BrMeasDb:
+                    break;
+                case Program.MeasurementType.IlMeasDbm: // P=-47.13dBr  1.3
+                    prefix = "P=-".Length;
+                    postfix = "dBr  1.3\r".Length;
+                    result = measurement.Substring(prefix);
+                    result = result.Substring(0, result.Length - postfix);
+                    break;
+                case Program.MeasurementType.PowerMeasDbm:
+                    break;
+                default:
+                    throw new NotSupportedException("Invalid string or unsupported measurement type");
+            }
+            return result;
+        }
+
         public string GetMeasurement(Program.MeasurementType mMode) // use enum MeasurementType
         {
             var mode = (int)mMode;
@@ -170,18 +217,14 @@ namespace AutomeasAsyncCommunication
                 : "Power measurement:\t";
             {
                 // set mode
-                SendRequest(measMode.ToString());
+                SendSafeRequest(measMode.ToString());
                 Thread.Sleep(1000);
             }
             {
                 // send request
-                SendRequest(request.ToString());
+                result = SendSafeRequest(request.ToString());
+                result = ParseMeasurement_MakeNumeric(result, Program.MeasurementType.IlMeasDbm);
                 Port.DiscardInBuffer();
-                Thread.Sleep(1000);
-                var response = "";
-                //while (response == "" || response == "???") response = GetResponse();
-                result = Port.ReadLine();
-                //result += response;
             }
             Console.WriteLine($"{result}");
             return result;

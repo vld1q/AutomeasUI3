@@ -32,6 +32,9 @@ public partial class DashboardViewModel : ObservableObject
         private ObservableCollection<ObservableValue?> _measuredValues = new(){null,null,null, null,null,null, null,null,null, null,null,null};
         private ObservableCollection<ObservableValue?> _measuredValues2 = new(){null,null,null, null,null,null, null,null,null, null,null,null};
         public RelayCommand CommenceExperimentCommand { get; set; }
+        /// <summary>
+        /// Execute instructions determined by the user via UI
+        /// </summary>
         public void CommenceExperiment()
         {
             // 0. import relevant settings
@@ -44,6 +47,7 @@ public partial class DashboardViewModel : ObservableObject
             };
             List<byte[]> exe;
             Mcu mcu = new("COM5", 9600);
+            mcu.Deactivate();
             Gauge gauge = new("COM6");
             Thread.Sleep(3000);
             {   // 1. Init connection with peripherials
@@ -63,7 +67,7 @@ public partial class DashboardViewModel : ObservableObject
                         gauge.Port.DiscardInBuffer();
                         gauge.Port.DiscardOutBuffer();
                         mcu.Cycle(exe);
-                        gauge.SendRequest("3");
+                        gauge.SendSafeRequest("3");
                         _measuredValues.RemoveAt(0);
                         result = Program.SingularMeasurement(gauge, Program.MeasurementType.IlMeasDbm);
                         
@@ -74,7 +78,7 @@ public partial class DashboardViewModel : ObservableObject
                                 line = $"{result.ToString()}\t 1300nm";
                                fw.WriteLine(line);
                                _measuredValues.Add(new(result));
-                               gauge.SendRequest("5");
+                               gauge.SendSafeRequest("5");
                                _measuredValues2.RemoveAt(0);
                                result = Program.SingularMeasurement(gauge, Program.MeasurementType.IlMeasDbm);
                                line = $"{result.ToString()}\t 1500nm";
