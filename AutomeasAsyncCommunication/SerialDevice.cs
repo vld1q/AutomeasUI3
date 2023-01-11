@@ -10,6 +10,7 @@ namespace AutomeasAsyncCommunication
     {
         public readonly SerialPort Port;
         protected bool IsDeactivated = false;
+
         public SerialDevice(string port, int baudrate)
         {
             Port = new SerialPort();
@@ -25,12 +26,14 @@ namespace AutomeasAsyncCommunication
                 //_port.WriteTimeout = 500;
             }
         }
+
         /// <summary>
         /// Make device not accept instructions.
         /// </summary>
         public void Deactivate()
         {
-            this.IsDeactivated = true;}
+            this.IsDeactivated = true;
+        }
 
         public static SerialDevice operator ++(SerialDevice self)
         {
@@ -57,14 +60,13 @@ namespace AutomeasAsyncCommunication
             if (Port.IsOpen)
                 Port.WriteLine(msg);
             string response = Port.ReadLine();
-            if (response!="") return response;
+            if (response != "") return response;
             else
                 throw new NotSupportedException("Port is not open");
         }
 
         public string GetResponse()
         {
-            
             string result;
             try
             {
@@ -93,6 +95,7 @@ namespace AutomeasAsyncCommunication
             {
                 return;
             }
+
             Port.DiscardInBuffer();
             Port.DiscardOutBuffer();
             var response = "";
@@ -123,12 +126,14 @@ namespace AutomeasAsyncCommunication
             Thread.Sleep(1500);
             if (response == "done") Console.WriteLine("MOVE RIGHT SUCCESSFUL");*/
         }
+
         public void Cycle(List<byte[]> exe)
         {
             if (IsDeactivated)
             {
                 return;
             }
+
             Port.DiscardInBuffer();
             Port.DiscardOutBuffer();
             var b = exe[0];
@@ -154,6 +159,7 @@ namespace AutomeasAsyncCommunication
             Thread.Sleep(1500);
             if (response == "done") Console.WriteLine("MOVE RIGHT SUCCESSFUL");*/
         }
+
         public static byte[] StringToByteArray(string hex)
         {
             return Enumerable.Range(0, hex.Length)
@@ -188,21 +194,36 @@ namespace AutomeasAsyncCommunication
         {
             string result = "";
             int prefix, postfix;
+            prefix = postfix = 0;
+            // TODO refactor, make better parsing
             switch (mMode)
             {
-                case Program.MeasurementType.BrMeasDb:
+                case Program.MeasurementType.BrMeasDb: // BR=-57.8dB   1.5
+                    prefix = "BR=-".Length;
+                    postfix = "dB   1.5\r".Length;
+
+
                     break;
                 case Program.MeasurementType.IlMeasDbm: // P=-47.13dBr  1.3
                     prefix = "P=-".Length;
                     postfix = "dBr  1.3\r".Length;
-                    result = measurement.Substring(prefix);
-                    result = result.Substring(0, result.Length - postfix);
+
                     break;
-                case Program.MeasurementType.PowerMeasDbm:
+                case Program.MeasurementType.PowerMeasDbm: // P<-50.00dBm  1.3
+                    prefix = "P<-".Length;
+                    postfix = "dBm  1.3\r".Length; 
                     break;
                 default:
                     throw new NotSupportedException("Invalid string or unsupported measurement type");
             }
+
+            if (measurement[prefix - 1] != '-')
+            {
+                prefix--;
+            }
+
+            result = measurement.Substring(prefix);
+            result = result.Substring(0, result.Length - postfix);
             return result;
         }
 
@@ -212,9 +233,9 @@ namespace AutomeasAsyncCommunication
             var result = "";
             const char request = 'G';
             var measMode = IntToCommand[mode];
-            result += mMode == Program.MeasurementType.BrMeasDb ? "BR measurement:\t\t"
+            /*result += mMode == Program.MeasurementType.BrMeasDb ? "BR measurement:\t\t"
                 : mMode == Program.MeasurementType.IlMeasDbm ? "IL measurement:\t\t"
-                : "Power measurement:\t";
+                : "Power measurement:\t";*/
             {
                 // set mode
                 SendSafeRequest(measMode.ToString());
@@ -223,7 +244,7 @@ namespace AutomeasAsyncCommunication
             {
                 // send request
                 result = SendSafeRequest(request.ToString());
-                result = ParseMeasurement_MakeNumeric(result, Program.MeasurementType.IlMeasDbm);
+                result = ParseMeasurement_MakeNumeric(result, mMode);
                 Port.DiscardInBuffer();
             }
             Console.WriteLine($"{result}");

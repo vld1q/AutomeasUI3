@@ -23,8 +23,8 @@
                     Grid.Row="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
-            <Button Content="START" Command="{Binding CommenceExperimentCommand}" Padding="10" Margin="10"/>
-            <Button Content="STOP"  Command="{Binding HaltExperimentCommand}" Padding="10" Margin="10"/>
+            <Button Content="START" IsEnabled="{Binding isStartEnabled.Value}" Command="{Binding CommenceExperimentCommand}" Padding="10" Margin="10"/>
+            <Button Content="STOP"  IsEnabled="{Binding !isStartEnabled.Value}" Command="{Binding HaltExperimentCommand}" Padding="10" Margin="10"/>
         </StackPanel>
     </Grid>
 </UserControl>
