@@ -45,13 +45,6 @@ public partial class DashboardViewModel : ObservableObject
     private ObservableCollection<ObservableValue?> _displayedTrace = new()
         { null, null, null, null, null, null, null, null, null, null, null, null };
 
-    private ObservableCollection<ObservableValue?> _measuredIL = new()
-        { null, null, null, null, null, null, null, null, null, null, null, null };
-    private ObservableCollection<ObservableValue?> _measuredBR = new()
-        { null, null, null, null, null, null, null, null, null, null, null, null };
-    private ObservableCollection<ObservableValue?> _measuredPower = new()
-        { null, null, null, null, null, null, null, null, null, null, null, null };
-
     public RelayCommand CommenceExperimentCommand { get; set; }
     public RelayCommand HaltExperimentCommand { get; set; }
     public CancellationTokenSource tokenSource;
@@ -110,7 +103,6 @@ public partial class DashboardViewModel : ObservableObject
     public void CommenceExperiment()
     {
         isStartEnabled.Value = false;
-
         bool TaskCancelled()
         {
             try
@@ -159,7 +151,8 @@ public partial class DashboardViewModel : ObservableObject
         Dictionary<string, object> Settings = new()
         {
             { "step", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue() },
-            { "repeats", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][1]).GetValue() }
+            { "repeats", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][1]).GetValue() },
+            {"type", ((Combobox)ConfigBar.Collumns["PomiaryLeft"][0]).GetValue()}, 
         };
         progressBarMax.Value = Convert.ToUInt16(Settings["repeats"]);
         List<byte[]> exe;
@@ -188,6 +181,14 @@ public partial class DashboardViewModel : ObservableObject
             return;
         }
         Thread.Sleep(3000);
+        Program.MeasurementType measMode;
+        {
+            var tp = (string)Settings["type"];
+            measMode = (tp is "IL") ? Program.MeasurementType.IlMeasDbm :
+                (tp is "BR") ? Program.MeasurementType.BrMeasDb :
+                Program.MeasurementType.PowerMeasDbm;
+        }
+        gauge.SetMode(measMode);
         {
             // 2.  Interpret & apply config
             PseudoassemblyLanguage.ScriptGenerator.Cycle.Step = (string)Settings["step"];
@@ -208,6 +209,7 @@ public partial class DashboardViewModel : ObservableObject
                 if (TaskCancelled()) return; // exit thread
                 // 3.2 start doing measurments
                 int repeats = Convert.ToUInt16((string)Settings["repeats"]);
+                
                 using (FileStream fs =
                        new FileStream(fileName,
                            FileMode.Append, FileAccess.Write, FileShare.None))
@@ -218,28 +220,28 @@ public partial class DashboardViewModel : ObservableObject
                         // meas1
                         var valueNm1310 = FailsafeMeasurementAlgorithm(() =>
                             {
-                                gauge.SetMode(Program.MeasurementType.BrMeasDb);
+                                //gauge.SetMode(Program.MeasurementType.BrMeasDb);
                                 Thread.Sleep(500);
                                 gauge.SetMode(Program.MeasurementType.Nm1310);
                             },
-                            () => { }, Program.MeasurementType.BrMeasDb, 0);
+                            () => { }, measMode, 0);
                         var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
+                        _displayedTrace.RemoveAt(0);
+                        _displayedTrace.Add(new(result1310));
                         if (TaskCancelled()) return; // exit thread
                         // meas2
                         var valueNm1550 = FailsafeMeasurementAlgorithm(() =>
                             {
-                                gauge.SetMode(Program.MeasurementType.IlMeasDbm);
+                                //gauge.SetMode(Program.MeasurementType.IlMeasDbm);
                                 Thread.Sleep(500);
                                 gauge.SetMode(Program.MeasurementType.Nm1550);
                             },
-                            () => { }, Program.MeasurementType.BrMeasDb, 0);
+                            () => { }, measMode, 0);
                         var result1550 = Convert.ToDouble(valueNm1550, CultureInfo.InvariantCulture);
                         if (TaskCancelled()) return; // exit thread
                         // sync both trends at the same time
                         _displayedTrace.RemoveAt(0);
-                        _measuredBR.RemoveAt(0);
-                        _displayedTrace.Add(new(result1310));
-                        _measuredBR.Add(new(result1550));
+                        _displayedTrace.Add(new(result1550));
                         progressBarIndex.Value++;
                         if (TaskCancelled()) return; // exit thread
                     }
@@ -274,7 +276,6 @@ public partial class DashboardViewModel : ObservableObject
 
     private readonly object _lock = new object();
     private readonly object _lock2 = new object();
-
     public DashboardViewModel()
     {
         Task.Run(() =>
