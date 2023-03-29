@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO.Ports;
 using AutomeasToolkit.Basic.TitledList;
+using AutomeasUI.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AutomeasUI.DevConfig;
 public static class ConfigBar
@@ -17,7 +20,9 @@ public static class ConfigBar
         {
             "TypRuchuRight", new ObservableCollection<TitledList>
             {
-                Combobox.Generator.GetList("Rodzaj kroku", new[] { "full", "half", "half_b", "1/4", "1/8", "1/16", "1/32" })
+                Combobox.Generator.GetList("Rodzaj kroku", new[] { "full", "half", "half_b", "1/4", "1/8", "1/16", "1/32" }),
+                Combobox.Generator.GetList("Mcu COM", SerialPort.GetPortNames()),
+                Combobox.Generator.GetList("Gauge COM", SerialPort.GetPortNames())
             }
         },
         {
@@ -36,6 +41,6 @@ public static class ConfigBar
                     "Odchylenie standardowe", "Uwzględnij...", "Placeholder1", "Placeholder2", "Placeholder3"
                 })
             }
-        }
+        },
     };
 }

@@ -30,7 +30,7 @@ public partial class DashboardViewModel : ObservableObject
 {
     //private readonly Mcu _mcu = new Mcu("COM10",9600);
     //private readonly Gauge _gauge = new Gauge("COM5");
-    public ObservableType<bool> isStartEnabled { get; set; }= new(true);
+    public ObservableBool isStartEnabled { get; set; }= new(true);
     public ObservableType<int> progressBarMax { get; set; } = new(1);
     public ObservableType<int> progressBarIndex { get; set; } = new(0);
     public ObservableType<Visibility> progressBarVisible { get; set; } = new(Visibility.Hidden);
@@ -109,13 +109,15 @@ public partial class DashboardViewModel : ObservableObject
         Dictionary<string, object> Settings = new()
         {
             { "step", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue() },
-            { "repeats", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][1]).GetValue() }
+            { "repeats", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][1]).GetValue() },
+            { "mcuCOM", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue()},
+            { "gaugeCOM", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][1]).GetValue()}
         };
         progressBarMax.Value = Convert.ToUInt16(Settings["repeats"]);
         List<byte[]> exe;
-        Mcu mcu = new("COM5", 9600);
+        Mcu mcu = new((string)Settings["mcuCOM"], 9600);
         mcu.Deactivate();
-        Gauge gauge = new("COM6");
+        Gauge gauge = new((string)Settings["gaugeCOM"]);
         Thread.Sleep(3000);
         {
             // 1. Init connection with peripherials
@@ -136,9 +138,9 @@ public partial class DashboardViewModel : ObservableObject
                 
                 for (int i = 0; i < Convert.ToUInt16((string)Settings["repeats"]); i++)
                 {
-                    gauge.Port.DiscardInBuffer();
-                    gauge.Port.DiscardOutBuffer();
-                    mcu.Cycle(exe);
+                    //gauge.Port.DiscardInBuffer();
+                    //gauge.Port.DiscardOutBuffer();
+                    //mcu.Cycle(exe);
 
 
                     {
@@ -148,7 +150,7 @@ public partial class DashboardViewModel : ObservableObject
                                    FileMode.Append, FileAccess.Write, FileShare.None))
                         using (StreamWriter fw = new StreamWriter(fs))
                         {
-                            gauge.SendSafeRequest("3");
+                            //gauge.SendSafeRequest("3");
                             result = Convert.ToDouble(gauge.GetMeasurement(Program.MeasurementType.PowerMeasDbm),
                                 CultureInfo.InvariantCulture);
                             _measuredValues.RemoveAt(0);

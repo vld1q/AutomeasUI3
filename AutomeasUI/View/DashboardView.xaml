@@ -28,7 +28,7 @@
                     VerticalAlignment="Center">
             <Button Content="START" IsEnabled="{Binding isStartEnabled.Value}"
                     Command="{Binding CommenceExperimentCommand}" Padding="10" Margin="10" />
-            <Button Content="STOP" IsEnabled="{Binding !isStartEnabled.Value}"
+            <Button Content="STOP" IsEnabled="{Binding isStartEnabled.NotValue}"
                     Command="{Binding HaltExperimentCommand}" Padding="10" Margin="10" />
         </StackPanel>
     </Grid>
