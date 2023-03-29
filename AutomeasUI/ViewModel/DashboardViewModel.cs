@@ -23,6 +23,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using Microsoft.Win32;
+using PseudoassemblyLanguage.ScriptGenerator;
 using SkiaSharp;
 
 namespace AutomeasUI.ViewModel;
@@ -226,7 +227,13 @@ public partial class DashboardViewModel : ObservableObject
                                 Thread.Sleep(500);
                                 gauge.SetMode(Program.MeasurementType.Nm1310);
                             },
-                            () => { }, measMode, 0);
+                            () =>
+                            {
+                                var exe = Cycle.Preset.FullStepSlowSpeed("full");
+                                var fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(exe.Item1, exe.Item2),
+                                    "Mcu USART fail", "Mcu did not respond \'y\' to a command");
+                                if (fail) return;
+                            }, measMode, 0);
                         var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
                         if (TaskCancelled()) return; // exit thread
                         // meas2
@@ -236,7 +243,13 @@ public partial class DashboardViewModel : ObservableObject
                                 Thread.Sleep(500);
                                 gauge.SetMode(Program.MeasurementType.Nm1550);
                             },
-                            () => { }, measMode, 0);
+                            () =>
+                            {
+                                var exe = Cycle.Preset.FullStepSlowSpeed("full");
+                                var fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(exe.Item1, exe.Item2),
+                                    "Mcu USART fail", "Mcu did not respond \'y\' to a command");
+                                if(fail) return;
+                            }, measMode, 0);
                         var result1550 = Convert.ToDouble(valueNm1550, CultureInfo.InvariantCulture);
                         if (TaskCancelled()) return; // exit thread
                         // sync both trends at the same time

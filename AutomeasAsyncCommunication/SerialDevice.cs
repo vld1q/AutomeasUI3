@@ -160,6 +160,23 @@ namespace AutomeasAsyncCommunication
             if (response == "done") Console.WriteLine("MOVE RIGHT SUCCESSFUL");*/
         }
 
+        public void Cycle(List<byte[]> exe, int delay)
+        {
+            if (IsDeactivated)
+            {
+                return;
+            }
+
+            Port.DiscardInBuffer();
+            Port.DiscardOutBuffer();
+            foreach (byte[] instruction in exe)
+            {
+                Port.Write(instruction, 0, 2);
+                var v = Port.ReadLine();
+                if (v != "y") throw new Exception();
+                if(delay>0) Thread.Sleep(delay);
+            }
+        }
         public static byte[] StringToByteArray(string hex)
         {
             return Enumerable.Range(0, hex.Length)
