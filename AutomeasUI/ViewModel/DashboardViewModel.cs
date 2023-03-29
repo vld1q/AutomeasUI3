@@ -251,9 +251,9 @@ public partial class DashboardViewModel : ObservableObject
         {
             while (true)
             {
-                Thread.Sleep(2500); // 2.5s
+                Thread.Sleep(2500);
                 ConfigBar.Collumns["TypRuchuRight"][1] =
-                    Combobox.Generator.GetList("Gauge COM", SerialPort.GetPortNames());
+                    Combobox.Generator.GetList("Mcu COM", new []{"COM0", "COM1", "COM5"});
                 ConfigBar.Collumns["TypRuchuRight"][2] =
                     Combobox.Generator.GetList("Gauge COM", SerialPort.GetPortNames());
             }
