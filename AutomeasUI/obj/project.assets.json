@@ -1037,19 +1037,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Kczyz\\.nuget\\packages\\": {}
+    "C:\\Users\\Admin\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasUI\\AutomeasUI.csproj",
+      "projectUniqueName": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasUI\\AutomeasUI.csproj",
       "projectName": "AutomeasUI",
-      "projectPath": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasUI\\AutomeasUI.csproj",
-      "packagesPath": "C:\\Users\\Kczyz\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasUI\\obj\\",
+      "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasUI\\AutomeasUI.csproj",
+      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasUI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Kczyz\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1063,14 +1063,14 @@
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
           "projectReferences": {
-            "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj": {
-              "projectPath": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj"
+            "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj": {
+              "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj"
             },
-            "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasToolkit\\AutomeasToolkit.csproj": {
-              "projectPath": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasToolkit\\AutomeasToolkit.csproj"
+            "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasToolkit\\AutomeasToolkit.csproj": {
+              "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasToolkit\\AutomeasToolkit.csproj"
             },
-            "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj": {
-              "projectPath": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj"
+            "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj": {
+              "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj"
             }
           }
         }
@@ -1109,24 +1109,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[6.0.12, 6.0.12]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[6.0.12, 6.0.12]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[6.0.12, 6.0.12]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[6.0.12, 6.0.12]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -1135,7 +1117,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
       }
     }
   }

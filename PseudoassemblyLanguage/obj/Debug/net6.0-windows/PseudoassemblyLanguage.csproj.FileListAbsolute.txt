@@ -22,3 +22,15 @@ C:\Users\Kczyz\RiderProjects\AutomeasUI\PseudoassemblyLanguage\obj\Debug\net6.0-
 C:\Users\Kczyz\RiderProjects\AutomeasUI\PseudoassemblyLanguage\obj\Debug\net6.0-windows\refint\PseudoassemblyLanguage.dll
 C:\Users\Kczyz\RiderProjects\AutomeasUI\PseudoassemblyLanguage\obj\Debug\net6.0-windows\PseudoassemblyLanguage.pdb
 C:\Users\Kczyz\RiderProjects\AutomeasUI\PseudoassemblyLanguage\obj\Debug\net6.0-windows\ref\PseudoassemblyLanguage.dll
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\bin\Debug\net6.0-windows\PseudoassemblyLanguage.deps.json
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\bin\Debug\net6.0-windows\PseudoassemblyLanguage.dll
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\bin\Debug\net6.0-windows\PseudoassemblyLanguage.pdb
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\obj\Debug\net6.0-windows\PseudoassemblyLanguage.csproj.AssemblyReference.cache
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\obj\Debug\net6.0-windows\PseudoassemblyLanguage.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\obj\Debug\net6.0-windows\PseudoassemblyLanguage.AssemblyInfoInputs.cache
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\obj\Debug\net6.0-windows\PseudoassemblyLanguage.AssemblyInfo.cs
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\obj\Debug\net6.0-windows\PseudoassemblyLanguage.csproj.CoreCompileInputs.cache
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\obj\Debug\net6.0-windows\PseudoassemblyLanguage.dll
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\obj\Debug\net6.0-windows\refint\PseudoassemblyLanguage.dll
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\obj\Debug\net6.0-windows\PseudoassemblyLanguage.pdb
+C:\Users\Admin\RiderProjects\AutomeasUI2\PseudoassemblyLanguage\obj\Debug\net6.0-windows\ref\PseudoassemblyLanguage.dll

@@ -106,18 +106,49 @@ public partial class DashboardViewModel : ObservableObject
         // [DOES NOT WORK] TODO verify that cancelling token really kills process
         // TODO autoscale graph
         // 0. import relevant settings
-        Dictionary<string, object> Settings = new()
+        Dictionary<string, object> Settings;
+        try
         {
-            { "step", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue() },
-            { "repeats", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][1]).GetValue() },
-            { "mcuCOM", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue()},
-            { "gaugeCOM", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][1]).GetValue()}
-        };
+            Settings = new()
+            {
+                { "step", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue() },
+                { "repeats", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][1]).GetValue() },
+                { "mcuCOM", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue() },
+                { "gaugeCOM", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][1]).GetValue() }
+            };
+        }
+        catch (Exception e)
+        {
+            isStartEnabled.Value = true;
+            ExceptionWindow.DisplayErrorBox("Serial ports for Gauge and Mcu not selected", "");
+            return; // exit thread
+        }
         progressBarMax.Value = Convert.ToUInt16(Settings["repeats"]);
         List<byte[]> exe;
-        Mcu mcu = new((string)Settings["mcuCOM"], 9600);
+        Mcu mcu;
+        Gauge gauge;
+        try
+        {
+            mcu = new((string)Settings["mcuCOM"], 9600);
+        }
+        catch (Exception e)
+        {
+            isStartEnabled.Value = true;
+            ExceptionWindow.DisplayErrorBox("Mcu connection failure", e.Message);
+            return; // exit thread
+        }
+
+        try
+        {
+            gauge = new((string)Settings["gaugeCOM"]);
+        }
+        catch(Exception e)
+        {
+            isStartEnabled.Value = true;
+            ExceptionWindow.DisplayErrorBox("Gauge connection failure", e.Message);
+            return; // exit thread
+        }
         mcu.Deactivate();
-        Gauge gauge = new((string)Settings["gaugeCOM"]);
         Thread.Sleep(3000);
         {
             // 1. Init connection with peripherials

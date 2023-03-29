@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasToolkit\\AutomeasToolkit.csproj": {}
+    "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasToolkit\\AutomeasToolkit.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasToolkit\\AutomeasToolkit.csproj": {
+    "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasToolkit\\AutomeasToolkit.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasToolkit\\AutomeasToolkit.csproj",
+        "projectUniqueName": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasToolkit\\AutomeasToolkit.csproj",
         "projectName": "AutomeasToolkit",
-        "projectPath": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasToolkit\\AutomeasToolkit.csproj",
-        "packagesPath": "C:\\Users\\Kczyz\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\AutomeasToolkit\\obj\\",
+        "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasToolkit\\AutomeasToolkit.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasToolkit\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Kczyz\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -50,20 +50,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[6.0.12, 6.0.12]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[6.0.12, 6.0.12]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[6.0.12, 6.0.12]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
@@ -72,7 +58,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }

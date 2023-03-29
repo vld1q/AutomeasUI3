@@ -8,19 +8,19 @@
     "net6.0-windows7.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Kczyz\\.nuget\\packages\\": {}
+    "C:\\Users\\Admin\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj",
+      "projectUniqueName": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj",
       "projectName": "PseudoassemblyLanguage",
-      "projectPath": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj",
-      "packagesPath": "C:\\Users\\Kczyz\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Kczyz\\RiderProjects\\AutomeasUI\\PseudoassemblyLanguage\\obj\\",
+      "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj",
+      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\PseudoassemblyLanguage\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Kczyz\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -56,20 +56,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[6.0.12, 6.0.12]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[6.0.12, 6.0.12]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[6.0.12, 6.0.12]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -78,7 +64,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
       }
     }
   }
