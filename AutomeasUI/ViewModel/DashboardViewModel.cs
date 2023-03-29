@@ -42,7 +42,9 @@ public partial class DashboardViewModel : ObservableObject
     public ObservableType<string> Subtitle { get; set; }
     public ObservableType<string> EstimatedTime { get; set; }
 
-    private ObservableCollection<ObservableValue?> _displayedTrace = new()
+    private ObservableCollection<ObservableValue?> _trace1310 = new()
+        { null, null, null, null, null, null, null, null, null, null, null, null };
+    private ObservableCollection<ObservableValue?> _trace1550 = new()
         { null, null, null, null, null, null, null, null, null, null, null, null };
 
     public RelayCommand CommenceExperimentCommand { get; set; }
@@ -226,8 +228,6 @@ public partial class DashboardViewModel : ObservableObject
                             },
                             () => { }, measMode, 0);
                         var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
-                        _displayedTrace.RemoveAt(0);
-                        _displayedTrace.Add(new(result1310));
                         if (TaskCancelled()) return; // exit thread
                         // meas2
                         var valueNm1550 = FailsafeMeasurementAlgorithm(() =>
@@ -240,8 +240,10 @@ public partial class DashboardViewModel : ObservableObject
                         var result1550 = Convert.ToDouble(valueNm1550, CultureInfo.InvariantCulture);
                         if (TaskCancelled()) return; // exit thread
                         // sync both trends at the same time
-                        _displayedTrace.RemoveAt(0);
-                        _displayedTrace.Add(new(result1550));
+                        _trace1310.RemoveAt(0); 
+                        _trace1310.Add(new(result1310));
+                        _trace1310.RemoveAt(0);
+                        _trace1310.Add(new(result1550));
                         progressBarIndex.Value++;
                         if (TaskCancelled()) return; // exit thread
                     }
@@ -298,7 +300,11 @@ public partial class DashboardViewModel : ObservableObject
         {
             new LineSeries<ObservableValue?>()
             {
-                Values = _displayedTrace
+                Values = _trace1310
+            },
+            new LineSeries<ObservableValue?>()
+            {
+                Values = _trace1550
             }
         };
         this.tokenSource = new CancellationTokenSource();
