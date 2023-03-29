@@ -227,6 +227,24 @@ namespace AutomeasAsyncCommunication
             return result;
         }
 
+        public string GetMeasurement(Program.MeasurementType mMode, int sleep)
+        {
+            string result = SendSafeRequest("G");
+            result = ParseMeasurement_MakeNumeric(result, mMode);
+            Port.DiscardInBuffer();
+            Port.Close();
+            Thread.Sleep(sleep);
+            Port.Open();
+            return result;
+        }
+
+        public void SetMode(Program.MeasurementType mMode)
+        {
+            var mode = (int)mMode;
+            var measMode = IntToCommand[mode];
+            SendSafeRequest(measMode.ToString());
+        }
+
         public string GetMeasurement(Program.MeasurementType mMode) // use enum MeasurementType
         {
             var mode = (int)mMode;

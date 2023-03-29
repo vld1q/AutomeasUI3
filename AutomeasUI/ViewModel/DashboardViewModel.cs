@@ -22,6 +22,7 @@ using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
+using Microsoft.Win32;
 using SkiaSharp;
 
 namespace AutomeasUI.ViewModel;
@@ -101,60 +102,67 @@ public partial class DashboardViewModel : ObservableObject
     /// </summary>
     public void CommenceExperiment()
     {
+        Mcu mcu;
+        Gauge gauge;
+        bool VerifyDisplayErrorIfFails(Action operation, string title, string msg = "")
+        {
+            try
+            {
+                operation();
+            }
+            catch (Exception e)
+            {
+                Task.Run(() => ExceptionWindow.DisplayErrorBox(title, $"{msg} e.Message") );
+                isStartEnabled.Value = true;
+                return false;
+            }
+
+            return true;
+        }
+
+        string FailsafeMeasurementAlgorithm(Action gaugeSetup, Action mcuCycle, Program.MeasurementType mMode, int delayMs = 0)
+        {
+            gaugeSetup();
+            mcuCycle();
+            if (delayMs > 0) Thread.Sleep(delayMs);
+            return gauge.GetMeasurement(mMode, 300);
+        }
         isStartEnabled.Value = false;
         progressBarVisible.Value = Visibility.Visible;
         // [DOES NOT WORK] TODO verify that cancelling token really kills process
         // TODO autoscale graph
         // 0. import relevant settings
-        Dictionary<string, object> Settings;
-        try
+        Dictionary<string, object> Settings = new()
         {
-            Settings = new()
-            {
-                { "step", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue() },
-                { "repeats", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][1]).GetValue() },
-                { "mcuCOM", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue() },
-                { "gaugeCOM", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][1]).GetValue() }
-            };
-        }
-        catch (Exception e)
-        {
-            isStartEnabled.Value = true;
-            ExceptionWindow.DisplayErrorBox("Serial ports for Gauge and Mcu not selected", "");
-            return; // exit thread
-        }
+            { "step", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue() },
+            { "repeats", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][1]).GetValue() }
+        };
         progressBarMax.Value = Convert.ToUInt16(Settings["repeats"]);
         List<byte[]> exe;
-        Mcu mcu;
-        Gauge gauge;
+        bool errors = false;
+        errors |= VerifyDisplayErrorIfFails(() =>
+        {
+            string value = ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue();
+            Settings.Add("mcuCOM", value);
+        }, "Serial ports for Mcu not selected");
+        errors|= VerifyDisplayErrorIfFails(() =>
+        {
+            string value = ((Combobox)ConfigBar.Collumns["TypRuchuRight"][1]).GetValue();
+            Settings.Add("gaugeCOM", value);  
+        },"Serial port for Gauge not selected");
+        if(errors) return;
         try
         {
             mcu = new((string)Settings["mcuCOM"], 9600);
+            gauge = new((string)Settings["gaugeCOM"]);
         }
         catch (Exception e)
         {
+            ExceptionWindow.DisplayErrorBox("Could not connect to Mcu/Gauge serial",e.Message);
             isStartEnabled.Value = true;
-            ExceptionWindow.DisplayErrorBox("Mcu connection failure", e.Message);
-            return; // exit thread
+            return;
         }
-
-        try
-        {
-            gauge = new((string)Settings["gaugeCOM"]);
-        }
-        catch(Exception e)
-        {
-            isStartEnabled.Value = true;
-            ExceptionWindow.DisplayErrorBox("Gauge connection failure", e.Message);
-            return; // exit thread
-        }
-        mcu.Deactivate();
         Thread.Sleep(3000);
-        {
-            // 1. Init connection with peripherials
-
-            //throw new NotImplementedException();
-        }
         {
             // 2.  Interpret & apply config
             PseudoassemblyLanguage.ScriptGenerator.Cycle.Step = (string)Settings["step"];
@@ -164,40 +172,43 @@ public partial class DashboardViewModel : ObservableObject
             // 3. Execute
             {
                 string line;
-                string fileName = GenerateResultFileName(@"C:\Users\Kczyz\Desktop\AutomeasResults");
+                var dialog = new SaveFileDialog();
+                dialog.Title = "Miejsce zapisu pomiarów";
+                dialog.DefaultExt = ".csv";
+                dialog.AddExtension = true;
+                dialog.ShowDialog();
+                string fileName = dialog.FileName;
+                if (fileName is "") return;
                 double? result;
-                
-                for (int i = 0; i < Convert.ToUInt16((string)Settings["repeats"]); i++)
+                int repeats = Convert.ToUInt16((string)Settings["repeats"]);
+                using (FileStream fs =
+                       new FileStream(fileName,
+                           FileMode.Append, FileAccess.Write, FileShare.None))
+                using (StreamWriter fw = new StreamWriter(fs))
                 {
-                    //gauge.Port.DiscardInBuffer();
-                    //gauge.Port.DiscardOutBuffer();
-                    //mcu.Cycle(exe);
-
-
+                    for (int i = 0; i < repeats; i++)
                     {
-                        
-                        using (FileStream fs =
-                               new FileStream(fileName,
-                                   FileMode.Append, FileAccess.Write, FileShare.None))
-                        using (StreamWriter fw = new StreamWriter(fs))
-                        {
-                            //gauge.SendSafeRequest("3");
-                            result = Convert.ToDouble(gauge.GetMeasurement(Program.MeasurementType.PowerMeasDbm),
-                                CultureInfo.InvariantCulture);
-                            _measuredValues.RemoveAt(0);
-                            _measuredValues.Add(new(result));
-                            line = $"{result.ToString()}\t 1300nm";
-                            fw.WriteLine(line);
-                            gauge.SendSafeRequest("5");
-                            result = Convert.ToDouble(gauge.GetMeasurement(Program.MeasurementType.BrMeasDb),
-                                CultureInfo.InvariantCulture);
-                            AutoscaleGraph((double)result, 5.0);
-                            _measuredValues2.RemoveAt(0);
-                            _measuredValues2.Add(new(result));
-                            line = $"{result.ToString()}\t 1500nm";
-                            fw.WriteLine(line);
-                        }
-
+                        var value = FailsafeMeasurementAlgorithm(() =>
+                            {
+                                gauge.SetMode(Program.MeasurementType.BrMeasDb);
+                                Thread.Sleep(500);
+                                gauge.SetMode(Program.MeasurementType.Nm1310);
+                            },
+                            () => { }, Program.MeasurementType.BrMeasDb, 0);
+                        result = Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                        _measuredValues.RemoveAt(0);
+                        _measuredValues.Add(new(result));
+                        // meas2
+                        value = FailsafeMeasurementAlgorithm(() =>
+                            {
+                                gauge.SetMode(Program.MeasurementType.IlMeasDbm);
+                                Thread.Sleep(500);
+                                gauge.SetMode(Program.MeasurementType.Nm1550);
+                            },
+                            () => { }, Program.MeasurementType.BrMeasDb, 0);
+                        result = Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                        _measuredValues2.RemoveAt(0);
+                        _measuredValues2.Add(new(result));
                         progressBarIndex.Value++;
                     }
                 }
