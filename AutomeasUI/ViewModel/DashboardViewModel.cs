@@ -31,6 +31,9 @@ public partial class DashboardViewModel : ObservableObject
 {
     //private readonly Mcu _mcu = new Mcu("COM10",9600);
     //private readonly Gauge _gauge = new Gauge("COM5");
+    public CancellationTokenSource Source = new CancellationTokenSource();
+    public CancellationToken Token;
+    private Thread _experiment;
     public ObservableBool isStartEnabled { get; set; }= new(true);
     public ObservableType<int> progressBarMax { get; set; } = new(1);
     public ObservableType<int> progressBarIndex { get; set; } = new(0);
@@ -39,10 +42,14 @@ public partial class DashboardViewModel : ObservableObject
     public ObservableType<string> Subtitle { get; set; }
     public ObservableType<string> EstimatedTime { get; set; }
 
-    private ObservableCollection<ObservableValue?> _measuredValues = new()
+    private ObservableCollection<ObservableValue?> _displayedTrace = new()
         { null, null, null, null, null, null, null, null, null, null, null, null };
 
-    private ObservableCollection<ObservableValue?> _measuredValues2 = new()
+    private ObservableCollection<ObservableValue?> _measuredIL = new()
+        { null, null, null, null, null, null, null, null, null, null, null, null };
+    private ObservableCollection<ObservableValue?> _measuredBR = new()
+        { null, null, null, null, null, null, null, null, null, null, null, null };
+    private ObservableCollection<ObservableValue?> _measuredPower = new()
         { null, null, null, null, null, null, null, null, null, null, null, null };
 
     public RelayCommand CommenceExperimentCommand { get; set; }
@@ -102,6 +109,25 @@ public partial class DashboardViewModel : ObservableObject
     /// </summary>
     public void CommenceExperiment()
     {
+        isStartEnabled.Value = false;
+
+        bool TaskCancelled()
+        {
+            try
+            {
+                Token.ThrowIfCancellationRequested();
+            }
+            catch (Exception e)
+            {
+                Source = new CancellationTokenSource();
+                Token = Source.Token;
+                CommenceExperimentCommand = new RelayCommand((() => Task.Run(() => CommenceExperiment(),Token)));
+                isStartEnabled.Value = true;
+                return true;
+            }
+
+            return false;
+        }
         Mcu mcu;
         Gauge gauge;
         bool VerifyDisplayErrorIfFails(Action operation, string title, string msg = "")
@@ -114,10 +140,10 @@ public partial class DashboardViewModel : ObservableObject
             {
                 Task.Run(() => ExceptionWindow.DisplayErrorBox(title, $"{msg} e.Message") );
                 isStartEnabled.Value = true;
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         string FailsafeMeasurementAlgorithm(Action gaugeSetup, Action mcuCycle, Program.MeasurementType mMode, int delayMs = 0)
@@ -127,7 +153,7 @@ public partial class DashboardViewModel : ObservableObject
             if (delayMs > 0) Thread.Sleep(delayMs);
             return gauge.GetMeasurement(mMode, 300);
         }
-        isStartEnabled.Value = false;
+        // ------------------------------------------------------------------------------
         progressBarVisible.Value = Visibility.Visible;
         // 0. import relevant settings
         Dictionary<string, object> Settings = new()
@@ -143,6 +169,7 @@ public partial class DashboardViewModel : ObservableObject
             string value = ((Combobox)ConfigBar.Collumns["TypRuchuRight"][1]).GetValue();
             Settings.Add("mcuCOM", value);
         }, "Serial ports for Mcu not selected");
+        if(errors) return;
         errors|= VerifyDisplayErrorIfFails(() =>
         {
             string value = ((Combobox)ConfigBar.Collumns["TypRuchuRight"][2]).GetValue();
@@ -167,6 +194,7 @@ public partial class DashboardViewModel : ObservableObject
             exe = PseudoassemblyLanguage.ScriptGenerator.Cycle.Generate();
         }
         {
+            if (TaskCancelled()) return; // exit thread
             // 3. Execute
             {
                 // 3.1 open file explorer, get file path.
@@ -177,6 +205,7 @@ public partial class DashboardViewModel : ObservableObject
                 dialog.ShowDialog();
                 string fileName = dialog.FileName;
                 if (fileName is "") return; // exit thread
+                if (TaskCancelled()) return; // exit thread
                 // 3.2 start doing measurments
                 int repeats = Convert.ToUInt16((string)Settings["repeats"]);
                 using (FileStream fs =
@@ -195,6 +224,7 @@ public partial class DashboardViewModel : ObservableObject
                             },
                             () => { }, Program.MeasurementType.BrMeasDb, 0);
                         var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
+                        if (TaskCancelled()) return; // exit thread
                         // meas2
                         var valueNm1550 = FailsafeMeasurementAlgorithm(() =>
                             {
@@ -204,12 +234,14 @@ public partial class DashboardViewModel : ObservableObject
                             },
                             () => { }, Program.MeasurementType.BrMeasDb, 0);
                         var result1550 = Convert.ToDouble(valueNm1550, CultureInfo.InvariantCulture);
+                        if (TaskCancelled()) return; // exit thread
                         // sync both trends at the same time
-                        _measuredValues.RemoveAt(0);
-                        _measuredValues2.RemoveAt(0);
-                        _measuredValues.Add(new(result1310));
-                        _measuredValues2.Add(new(result1550));
+                        _displayedTrace.RemoveAt(0);
+                        _measuredBR.RemoveAt(0);
+                        _displayedTrace.Add(new(result1310));
+                        _measuredBR.Add(new(result1550));
                         progressBarIndex.Value++;
+                        if (TaskCancelled()) return; // exit thread
                     }
                 }
             }
@@ -220,9 +252,7 @@ public partial class DashboardViewModel : ObservableObject
 
     public void HaltExperiment()
     {
-        this.tokenSource.Cancel();
-        this.tokenSource.Dispose();
-        this.isStartEnabled.Value = true;
+        Source.Cancel();
     }
 
     public ObservableCollection<ISeries> Series { get; set; }
@@ -252,11 +282,11 @@ public partial class DashboardViewModel : ObservableObject
             while (true)
             {
                 Thread.Sleep(2500);
+                var ports = SerialPort.GetPortNames();
+
+                ((Combobox)ConfigBar.Collumns["TypRuchuRight"][1]).Content = new ObservableCollection<string>(ports);
+                ((Combobox)ConfigBar.Collumns["TypRuchuRight"][2]).Content = new ObservableCollection<string>(ports);
                 
-                ConfigBar.Collumns["TypRuchuRight"][1] =
-                    Combobox.Generator.GetList("Gauge COM", SerialPort.GetPortNames());
-                ConfigBar.Collumns["TypRuchuRight"][2] =
-                    Combobox.Generator.GetList("Gauge COM", SerialPort.GetPortNames());
             }
 
         });
@@ -267,15 +297,12 @@ public partial class DashboardViewModel : ObservableObject
         {
             new LineSeries<ObservableValue?>()
             {
-                Values = _measuredValues
-            },
-            new LineSeries<ObservableValue?>()
-            {
-                Values = _measuredValues2
+                Values = _displayedTrace
             }
         };
         this.tokenSource = new CancellationTokenSource();
-        CommenceExperimentCommand = new RelayCommand((() => Task.Run(() => CommenceExperiment(),this.tokenSource.Token)));
+        Token = Source.Token;
+        CommenceExperimentCommand = new RelayCommand((() => Task.Run(() => CommenceExperiment(),Token)));
         HaltExperimentCommand = new RelayCommand(() => HaltExperiment());
         OnPropertyChanged(nameof(CommenceExperimentCommand));
     }

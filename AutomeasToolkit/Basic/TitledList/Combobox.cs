@@ -16,6 +16,8 @@ public partial class Combobox : TitledList
     {
         return Content[Index];
     }
+
+    
     public Combobox(ObservableCollection<string> content, int index = 0, string name = "") : base("combo", name)
     {
         _content = content;
