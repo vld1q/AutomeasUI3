@@ -129,8 +129,6 @@ public partial class DashboardViewModel : ObservableObject
         }
         isStartEnabled.Value = false;
         progressBarVisible.Value = Visibility.Visible;
-        // [DOES NOT WORK] TODO verify that cancelling token really kills process
-        // TODO autoscale graph
         // 0. import relevant settings
         Dictionary<string, object> Settings = new()
         {
@@ -142,12 +140,12 @@ public partial class DashboardViewModel : ObservableObject
         bool errors = false;
         errors |= VerifyDisplayErrorIfFails(() =>
         {
-            string value = ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue();
+            string value = ((Combobox)ConfigBar.Collumns["TypRuchuRight"][1]).GetValue();
             Settings.Add("mcuCOM", value);
         }, "Serial ports for Mcu not selected");
         errors|= VerifyDisplayErrorIfFails(() =>
         {
-            string value = ((Combobox)ConfigBar.Collumns["TypRuchuRight"][1]).GetValue();
+            string value = ((Combobox)ConfigBar.Collumns["TypRuchuRight"][2]).GetValue();
             Settings.Add("gaugeCOM", value);  
         },"Serial port for Gauge not selected");
         if(errors) return;
@@ -171,15 +169,15 @@ public partial class DashboardViewModel : ObservableObject
         {
             // 3. Execute
             {
-                string line;
+                // 3.1 open file explorer, get file path.
                 var dialog = new SaveFileDialog();
                 dialog.Title = "Miejsce zapisu pomiarów";
                 dialog.DefaultExt = ".csv";
                 dialog.AddExtension = true;
                 dialog.ShowDialog();
                 string fileName = dialog.FileName;
-                if (fileName is "") return;
-                double? result;
+                if (fileName is "") return; // exit thread
+                // 3.2 start doing measurments
                 int repeats = Convert.ToUInt16((string)Settings["repeats"]);
                 using (FileStream fs =
                        new FileStream(fileName,
@@ -188,27 +186,29 @@ public partial class DashboardViewModel : ObservableObject
                 {
                     for (int i = 0; i < repeats; i++)
                     {
-                        var value = FailsafeMeasurementAlgorithm(() =>
+                        // meas1
+                        var valueNm1310 = FailsafeMeasurementAlgorithm(() =>
                             {
                                 gauge.SetMode(Program.MeasurementType.BrMeasDb);
                                 Thread.Sleep(500);
                                 gauge.SetMode(Program.MeasurementType.Nm1310);
                             },
                             () => { }, Program.MeasurementType.BrMeasDb, 0);
-                        result = Convert.ToDouble(value, CultureInfo.InvariantCulture);
-                        _measuredValues.RemoveAt(0);
-                        _measuredValues.Add(new(result));
+                        var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
                         // meas2
-                        value = FailsafeMeasurementAlgorithm(() =>
+                        var valueNm1550 = FailsafeMeasurementAlgorithm(() =>
                             {
                                 gauge.SetMode(Program.MeasurementType.IlMeasDbm);
                                 Thread.Sleep(500);
                                 gauge.SetMode(Program.MeasurementType.Nm1550);
                             },
                             () => { }, Program.MeasurementType.BrMeasDb, 0);
-                        result = Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                        var result1550 = Convert.ToDouble(valueNm1550, CultureInfo.InvariantCulture);
+                        // sync both trends at the same time
+                        _measuredValues.RemoveAt(0);
                         _measuredValues2.RemoveAt(0);
-                        _measuredValues2.Add(new(result));
+                        _measuredValues.Add(new(result1310));
+                        _measuredValues2.Add(new(result1550));
                         progressBarIndex.Value++;
                     }
                 }
@@ -247,6 +247,18 @@ public partial class DashboardViewModel : ObservableObject
 
     public DashboardViewModel()
     {
+        Task.Run(() =>
+        {
+            while (true)
+            {
+                Thread.Sleep(2500);
+                ConfigBar.Collumns["TypRuchuRight"][1] =
+                    Combobox.Generator.GetList("Mcu COM", new []{"COM0", "COM1", "COM5"});
+                ConfigBar.Collumns["TypRuchuRight"][2] =
+                    Combobox.Generator.GetList("Gauge COM", SerialPort.GetPortNames());
+            }
+
+        });
         Title = new("Profil B");
         Subtitle = new("Pomiar nr. 7");
         EstimatedTime = new("1h 30m 15s");

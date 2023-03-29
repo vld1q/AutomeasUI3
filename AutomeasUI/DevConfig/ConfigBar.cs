@@ -28,9 +28,8 @@ public static class ConfigBar
         {
             "PomiaryLeft", new ObservableCollection<TitledList>
             {
-                Checkbox.Generator.GetList("Rodzaje pomiarów", new[] { "IB", "BR", "Power" }),
-                Combobox.Generator.GetList("Ilość prób/cykl", new[] { "1", "2", "3", "5" }),
-                Checkbox.Generator.GetList("", new[] { "Wylicz średnią" })
+                Checkbox.Generator.GetList("Rodzaje pomiarów", new[] { "IB", "BR", "Power"}),
+                Combobox.Generator.GetList("Ilość prób/cykl", new[] { "1", "2", "3", "5" })
             }
         },
         {
