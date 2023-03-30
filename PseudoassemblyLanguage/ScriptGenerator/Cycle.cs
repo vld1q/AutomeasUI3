@@ -31,10 +31,13 @@ public static class Cycle
         {
             cmd += $";mv {step} {interval}l";
         }
-        for (int i = 0; i < repeat; i++)
+        for (int i = 0; i < repeat -1; i++)
         {
             cmd += $";mv {step} {interval}r";
         }
+
+        cmd += ";mv full 10r";
+        cmd += ";mv pause 0r";
         List<byte[]> result = parser.parseLine(cmd);
         return result;
     }
@@ -44,14 +47,14 @@ public static class Cycle
         public static Tuple<List<byte[]>, int> Fastest(string step) =>
         new Tuple<List<byte[]>, int>(Cycle.Generate(step, 25, 1), 0);
         public static Tuple<List<byte[]>, int> FullStepMidSpeed(string step) =>
-            new Tuple<List<byte[]>, int>(Cycle.Generate(step, 5, 5), 100);
+            new Tuple<List<byte[]>, int>(Cycle.Generate(step, 5, 5), 0);
         public static Tuple<List<byte[]>, int> FullStepSlowSpeed(string step) =>
-            new Tuple<List<byte[]>, int>(Cycle.Generate(step, 1, 25), 100);
+            new Tuple<List<byte[]>, int>(Cycle.Generate(step, 1, 25), 0);
         public static Tuple<List<byte[]>, int> HalfStepFullSpeed(string step) =>
             new Tuple<List<byte[]>, int>(Cycle.Generate(step, 50, 1), 0);
         public static Tuple<List<byte[]>, int> HalfStepMidSpeed(string step) =>
-            new Tuple<List<byte[]>, int>(Cycle.Generate(step, 10, 5), 100);
+            new Tuple<List<byte[]>, int>(Cycle.Generate(step, 10, 5), 0);
         public static Tuple<List<byte[]>, int> HalfStepSlowSpeed(string step) =>
-            new Tuple<List<byte[]>, int>(Cycle.Generate(step, 1, 50), 100);
+            new Tuple<List<byte[]>, int>(Cycle.Generate(step, 1, 50), 0);
     }
 }

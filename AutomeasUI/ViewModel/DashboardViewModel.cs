@@ -106,6 +106,14 @@ public partial class DashboardViewModel : ObservableObject
     public void CommenceExperiment()
     {
         isStartEnabled.Value = false;
+        progressBarIndex.Value = 0;
+        /*for (int i = 0; i < 15; i++)
+        { // empty both traces
+            _trace1310.RemoveAt(0);
+            _trace1310.Add(null);
+            _trace1550.RemoveAt(0);
+            _trace1550.Add(null);
+        }*/
         bool TaskCancelled()
         {
             try
@@ -208,7 +216,13 @@ public partial class DashboardViewModel : ObservableObject
                 dialog.AddExtension = true;
                 dialog.ShowDialog();
                 string fileName = dialog.FileName;
-                if (fileName is "") return; // exit thread
+                if (fileName is "")
+                {
+                    isStartEnabled.Value = true;
+                    mcu.Port.Close();
+                    gauge.Port.Close();
+                    return; // exit thread
+                }
                 if (TaskCancelled()) return; // exit thread
                 // 3.2 start doing measurments
                 int repeats = Convert.ToUInt16((string)Settings["repeats"]);
@@ -218,6 +232,7 @@ public partial class DashboardViewModel : ObservableObject
                            FileMode.Append, FileAccess.Write, FileShare.None))
                 using (StreamWriter fw = new StreamWriter(fs))
                 {
+                    fw.WriteLine($"[{Settings["type"]}]; [1310nm]; [1550nm]");
                     for (int i = 0; i < repeats; i++)
                     {
                         // meas1
@@ -229,7 +244,7 @@ public partial class DashboardViewModel : ObservableObject
                             },
                             () =>
                             {
-                                var exe = Cycle.Preset.FullStepSlowSpeed("full");
+                                var exe = Cycle.Preset.FullStepMidSpeed("full");
                                 var fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(exe.Item1, exe.Item2),
                                     "Mcu USART fail", "Mcu did not respond \'y\' to a command");
                                 if (fail) return;
@@ -245,7 +260,7 @@ public partial class DashboardViewModel : ObservableObject
                             },
                             () =>
                             {
-                                var exe = Cycle.Preset.FullStepSlowSpeed("full");
+                                var exe = Cycle.Preset.FullStepMidSpeed("full");
                                 var fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(exe.Item1, exe.Item2),
                                     "Mcu USART fail", "Mcu did not respond \'y\' to a command");
                                 if(fail) return;
@@ -255,8 +270,9 @@ public partial class DashboardViewModel : ObservableObject
                         // sync both trends at the same time
                         _trace1310.RemoveAt(0); 
                         _trace1310.Add(new(result1310));
-                        _trace1310.RemoveAt(0);
-                        _trace1310.Add(new(result1550));
+                        _trace1550.RemoveAt(0);
+                        _trace1550.Add(new(result1550+1));
+                        fw.WriteLine($"{i}; {result1310}; {result1550}");
                         progressBarIndex.Value++;
                         if (TaskCancelled()) return; // exit thread
                     }
@@ -265,6 +281,8 @@ public partial class DashboardViewModel : ObservableObject
         }
         isStartEnabled.Value = true;
         progressBarVisible.Value = Visibility.Hidden;
+        mcu.Port.Close();
+        gauge.Port.Close();
     }
 
     public void HaltExperiment()
@@ -318,7 +336,8 @@ public partial class DashboardViewModel : ObservableObject
             new LineSeries<ObservableValue?>()
             {
                 Values = _trace1550
-            }
+            },
+            
         };
         this.tokenSource = new CancellationTokenSource();
         Token = Source.Token;
