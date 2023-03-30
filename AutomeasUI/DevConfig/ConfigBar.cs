@@ -13,14 +13,15 @@ public static class ConfigBar
         {
             "TypRuchuLeft", new ObservableCollection<TitledList>
             {
-                Combobox.Generator.GetList("Preset", new[] { "fajny cykl", "cykl", "półcykl", "ćwierćcykl" }),
-                Combobox.Generator.GetList("Ilość wykonań", new[] { "1", "5", "10", "50", "100", "200", "500" })
+                Combobox.Generator.GetList("Typ pomiaru", new[] { "IL", "BR", "Power"}),
+                Combobox.Generator.GetList("Ilość wykonań", new[] { "5","50", "500", "1000", "2000", "3000",  "5000"}),
+                
             }
         },
         {
             "TypRuchuRight", new ObservableCollection<TitledList>
             {
-                Combobox.Generator.GetList("Rodzaj kroku", new[] { "full", "half", "half_b", /*"1/4", "1/8", "1/16", "1/32"*/ }),
+                Combobox.Generator.GetList("Preset", new[] { "full", "half", "half_b", /*"1/4", "1/8", "1/16", "1/32"*/ }),
                 Combobox.Generator.GetList("Silnik COM", SerialPort.GetPortNames()),
                 Combobox.Generator.GetList("Miernik COM", SerialPort.GetPortNames())
             }

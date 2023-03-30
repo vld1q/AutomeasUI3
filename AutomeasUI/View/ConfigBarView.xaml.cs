@@ -16,6 +16,6 @@ public partial class ConfigBarView : UserControl
     public Tuple<ObservableCollection<TitledList>, ObservableCollection<TitledList>> TypRuchu { get; set; } =
         new(ConfigBar.Collumns["TypRuchuRight"], ConfigBar.Collumns["TypRuchuLeft"]);
 
-    public Tuple<ObservableCollection<TitledList>, ObservableCollection<TitledList>> Pomiary { get; set; } =
-        new(ConfigBar.Collumns["PomiaryLeft"], ConfigBar.Collumns["PomiaryRight"]);
+    //public Tuple<ObservableCollection<TitledList>, ObservableCollection<TitledList>> Pomiary { get; set; } =
+    //    new(ConfigBar.Collumns["PomiaryLeft"], ConfigBar.Collumns["PomiaryRight"]);
 }

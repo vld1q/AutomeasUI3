@@ -10,7 +10,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Visible">
         <Grid>
             <StackPanel Orientation="Vertical">
-                <Expander Header="Typ Ruchu">
+                <Expander Header="Typ Ruchu" IsExpanded="True">
                     <StackPanel Orientation="Vertical">
                         <TextBlock Height="30" />
                         <Grid>
@@ -27,7 +27,7 @@
                     </StackPanel>
 
                 </Expander>
-                <Expander Header="Pomiary">
+                <Expander Header="Pomiary" Visibility="Hidden">
                     <StackPanel Orientation="Vertical">
                         <TextBlock Height="30" />
                         <Grid>

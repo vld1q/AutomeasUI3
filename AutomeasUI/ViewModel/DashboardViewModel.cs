@@ -198,7 +198,7 @@ public partial class DashboardViewModel : ObservableObject
         {
             { "step", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue() },
             { "repeats", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][1]).GetValue() },
-            {"type", ((Combobox)ConfigBar.Collumns["PomiaryLeft"][0]).GetValue()}, 
+            {"type", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][0]).GetValue()}, 
         };
         progressBarMax.Value = Convert.ToUInt16(Settings["repeats"]);
         List<byte[]> exe;
