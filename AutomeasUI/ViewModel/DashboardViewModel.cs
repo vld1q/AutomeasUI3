@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.IO.Ports;
@@ -149,6 +150,40 @@ public partial class DashboardViewModel : ObservableObject
             return false;
         }
 
+        void AutoScaleGraph()
+        {
+            double min = 0;
+            double max = 0;
+            //first cycle
+            for (int i = _trace1310.Count-1; i < _trace1310.Count; i++)
+            {
+                var a = _trace1310[i];
+                var b = _trace1550[i];
+                if (a == null || b == null) return;
+                if(a.Value == null || b.Value == null) return;
+                double aa = (double)a.Value;
+                double bb = (double)b.Value;
+                min = (aa < bb) ? aa : bb;
+                max = (aa > bb) ? aa : bb;
+            }
+            for (int i = _trace1310.Count -2 ; i >= 0; i--)
+            {
+                var a = _trace1310[i];
+                var b = _trace1550[i];
+                if (a == null || b == null) continue;
+                if(a.Value == null || b.Value == null) continue;
+                double aa = (double)a.Value;
+                double bb = (double)b.Value;
+                var local_min = (aa < bb) ? aa : bb;
+                var local_max = (aa > bb) ? aa : bb;
+                min = (local_min < min) ? local_min : min;
+                max = (local_max > max) ? local_max : max;
+
+            }
+
+            YAxes[0].MinLimit = min - 2;
+            YAxes[0].MaxLimit = max + 2;
+        }
         string FailsafeMeasurementAlgorithm(Action gaugeSetup, Action mcuCycle, Program.MeasurementType mMode, int delayMs = 0)
         {
             gaugeSetup();
@@ -206,7 +241,12 @@ public partial class DashboardViewModel : ObservableObject
             exe = PseudoassemblyLanguage.ScriptGenerator.Cycle.Generate();
         }
         {
-            if (TaskCancelled()) return; // exit thread
+            if (TaskCancelled())
+            {
+                mcu.Port.Close();
+                gauge.Port.Close();
+                return;
+            } // exit thread
             // 3. Execute
             {
                 // 3.1 open file explorer, get file path.
@@ -223,13 +263,22 @@ public partial class DashboardViewModel : ObservableObject
                     gauge.Port.Close();
                     return; // exit thread
                 }
-                if (TaskCancelled()) return; // exit thread
+                if (TaskCancelled())
+                {
+                    mcu.Port.Close();
+                    gauge.Port.Close();
+                    return;
+                } // exit thread
                 // 3.2 start doing measurments
                 int repeats = Convert.ToUInt16((string)Settings["repeats"]);
-                
+                for (int i = 0; i < _trace1310.Count; i++)
+                {
+                    _trace1310[i] = null;
+                    _trace1550[i] = null;
+                }
                 using (FileStream fs =
                        new FileStream(fileName,
-                           FileMode.Append, FileAccess.Write, FileShare.None))
+                           FileMode.Create, FileAccess.Write, FileShare.None))
                 using (StreamWriter fw = new StreamWriter(fs))
                 {
                     fw.WriteLine($"[{Settings["type"]}]; [1310nm]; [1550nm]");
@@ -250,7 +299,12 @@ public partial class DashboardViewModel : ObservableObject
                                 if (fail) return;
                             }, measMode, 0);
                         var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
-                        if (TaskCancelled()) return; // exit thread
+                        if (TaskCancelled())
+                        {
+                            mcu.Port.Close();
+                            gauge.Port.Close();
+                            return;
+                        } // exit thread
                         // meas2
                         var valueNm1550 = FailsafeMeasurementAlgorithm(() =>
                             {
@@ -266,15 +320,26 @@ public partial class DashboardViewModel : ObservableObject
                                 if(fail) return;
                             }, measMode, 0);
                         var result1550 = Convert.ToDouble(valueNm1550, CultureInfo.InvariantCulture);
-                        if (TaskCancelled()) return; // exit thread
+                        if (TaskCancelled())
+                        {
+                            mcu.Port.Close();
+                            gauge.Port.Close();
+                            return;
+                        } // exit thread
                         // sync both trends at the same time
                         _trace1310.RemoveAt(0); 
                         _trace1310.Add(new(result1310));
                         _trace1550.RemoveAt(0);
                         _trace1550.Add(new(result1550+1));
                         fw.WriteLine($"{i}; {result1310}; {result1550}");
+                        AutoScaleGraph();
                         progressBarIndex.Value++;
-                        if (TaskCancelled()) return; // exit thread
+                        if (TaskCancelled())
+                        {
+                            mcu.Port.Close();
+                            gauge.Port.Close();
+                            return;
+                        } // exit thread
                     }
                 }
             }
@@ -351,7 +416,7 @@ public partial class DashboardViewModel : ObservableObject
         new()
         {
             MinLimit = 0,
-            MaxLimit = 60,
+            MaxLimit = 1,
             ForceStepToMin = true,
             MinStep = 1,
             TextSize = 14,
