@@ -227,6 +227,8 @@ public partial class DashboardViewModel : ObservableObject
             return;
         }
         Thread.Sleep(3000);
+        gauge.SetMode(Program.MeasurementType.Nm1310);
+        Thread.Sleep(3000);
         Program.MeasurementType measMode;
         {
             var tp = (string)Settings["type"];
@@ -235,11 +237,6 @@ public partial class DashboardViewModel : ObservableObject
                 Program.MeasurementType.PowerMeasDbm;
         }
         gauge.SetMode(measMode);
-        {
-            // 2.  Interpret & apply config
-            PseudoassemblyLanguage.ScriptGenerator.Cycle.Step = (string)Settings["step"];
-            exe = PseudoassemblyLanguage.ScriptGenerator.Cycle.Generate();
-        }
         {
             if (TaskCancelled())
             {
@@ -293,10 +290,30 @@ public partial class DashboardViewModel : ObservableObject
                             },
                             () =>
                             {
-                                var exe = Cycle.Preset.FullStepMidSpeed("full");
-                                var fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(exe.Item1, exe.Item2),
-                                    "Mcu USART fail", "Mcu did not respond \'y\' to a command");
-                                if (fail) return;
+                                string step = (string)Settings["step"];
+                                int interval = (step is "full") ? 30 : 60;
+                                var left = Cycle.GenerateLeft(step, interval, 0);
+                                var right = Cycle.GenerateRight(step, interval, 0);
+                                var exe = Cycle.Preset.FullStepMidSpeed(step);
+                                bool fail = false;
+                                switch (step)
+                                {
+                                    case "half":
+                                    case "full":
+                                        fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(left, right, 500),
+                                            "Mcu USART fail", "Mcu did not respond \'y\' to a command");
+                                        break;
+                                    case "half_b":
+                                        fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(exe.Item1, exe.Item2),
+                                            "Mcu USART fail", "Mcu did not respond \'y\' to a command");    
+                                        break;
+                                    default:
+                                        fail = true;
+                                        break;
+
+
+                                }
+                                if(fail) return;
                             }, measMode, 0);
                         var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
                         if (TaskCancelled())
@@ -314,9 +331,29 @@ public partial class DashboardViewModel : ObservableObject
                             },
                             () =>
                             {
-                                var exe = Cycle.Preset.FullStepMidSpeed("full");
-                                var fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(exe.Item1, exe.Item2),
-                                    "Mcu USART fail", "Mcu did not respond \'y\' to a command");
+                                string step = (string)Settings["step"];
+                                int interval = (step is "full") ? 30 : 60;
+                                var left = Cycle.GenerateLeft(step, interval, 0);
+                                var right = Cycle.GenerateRight(step, interval, 0);
+                                var exe = Cycle.Preset.FullStepMidSpeed(step);
+                                bool fail = false;
+                                switch (step)
+                                {
+                                    case "half":
+                                    case "full":
+                                        fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(left, right, 500),
+                                            "Mcu USART fail", "Mcu did not respond \'y\' to a command");
+                                        break;
+                                    case "half_b":
+                                        fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(exe.Item1, exe.Item2),
+                                            "Mcu USART fail", "Mcu did not respond \'y\' to a command");    
+                                        break;
+                                    default:
+                                        fail = true;
+                                        break;
+
+
+                                }
                                 if(fail) return;
                             }, measMode, 0);
                         var result1550 = Convert.ToDouble(valueNm1550, CultureInfo.InvariantCulture);

@@ -20,9 +20,9 @@ public static class ConfigBar
         {
             "TypRuchuRight", new ObservableCollection<TitledList>
             {
-                Combobox.Generator.GetList("Rodzaj kroku", new[] { "full", "half", "half_b", "1/4", "1/8", "1/16", "1/32" }),
-                Combobox.Generator.GetList("Mcu COM", SerialPort.GetPortNames()),
-                Combobox.Generator.GetList("Gauge COM", SerialPort.GetPortNames())
+                Combobox.Generator.GetList("Rodzaj kroku", new[] { "full", "half", "half_b", /*"1/4", "1/8", "1/16", "1/32"*/ }),
+                Combobox.Generator.GetList("Silnik COM", SerialPort.GetPortNames()),
+                Combobox.Generator.GetList("Miernik COM", SerialPort.GetPortNames())
             }
         },
         {

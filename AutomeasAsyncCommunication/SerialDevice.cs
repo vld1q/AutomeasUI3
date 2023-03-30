@@ -159,8 +159,30 @@ namespace AutomeasAsyncCommunication
             Thread.Sleep(1500);
             if (response == "done") Console.WriteLine("MOVE RIGHT SUCCESSFUL");*/
         }
+        public void Cycle(List<byte[]> exe, List<byte[]> exe2, int delay )
+        {
+            if (IsDeactivated)
+            {
+                return;
+            }
 
-        public void Cycle(List<byte[]> exe, int delay)
+            Port.DiscardInBuffer();
+            Port.DiscardOutBuffer();
+            foreach (byte[] instruction in exe)
+            {
+                Port.Write(instruction, 0, 2);
+                var v = Port.ReadLine();
+                if (v != "y") throw new Exception();
+            }
+            Thread.Sleep(delay);
+            foreach (byte[] instruction in exe2)
+            {
+                Port.Write(instruction, 0, 2);
+                var v = Port.ReadLine();
+                if (v != "y") throw new Exception();
+            }
+        }
+        public void Cycle(List<byte[]> exe, int delay )
         {
             if (IsDeactivated)
             {

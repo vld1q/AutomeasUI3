@@ -41,17 +41,45 @@ public static class Cycle
         List<byte[]> result = parser.parseLine(cmd);
         return result;
     }
+    public static List<byte[]> GenerateLeft(string step, int interval, int repeat)
+    {
+        Macros parser = new();
+        string cmd = $"mv {step} {interval}l";
+        for (int i = 0; i < repeat-1; i++)
+        {
+            cmd += $";mv {step} {interval}l";
+        }
+        cmd += ";mv pause 0r";
+        List<byte[]> result = parser.parseLine(cmd);
+        return result;
+    }
+    public static List<byte[]> GenerateRight(string step, int interval, int repeat)
+    {
+        Macros parser = new();
+        string cmd = $"mv {step} {interval}r";
+        for (int i = 0; i < repeat-1; i++)
+        {
+            cmd += $";mv {step} {interval}r";
+        }
+        cmd += ";mv pause 0r";
+        List<byte[]> result = parser.parseLine(cmd);
+        return result;
+    }
 
     public static class Preset
     {
         public static Tuple<List<byte[]>, int> Fastest(string step) =>
-        new Tuple<List<byte[]>, int>(Cycle.Generate(step, 25, 1), 0);
+        new Tuple<List<byte[]>, int>(Cycle.Generate(step, 15, 2), 0);
         public static Tuple<List<byte[]>, int> FullStepMidSpeed(string step) =>
             new Tuple<List<byte[]>, int>(Cycle.Generate(step, 5, 5), 0);
         public static Tuple<List<byte[]>, int> FullStepSlowSpeed(string step) =>
             new Tuple<List<byte[]>, int>(Cycle.Generate(step, 1, 25), 0);
-        public static Tuple<List<byte[]>, int> HalfStepFullSpeed(string step) =>
-            new Tuple<List<byte[]>, int>(Cycle.Generate(step, 50, 1), 0);
+
+        public static Tuple<List<byte[]>, int> HalfStepFullSpeed(string step)
+        {
+            return new Tuple<List<byte[]>, int>(Cycle.Generate(step, 50, 1), 0);
+        }
+
         public static Tuple<List<byte[]>, int> HalfStepMidSpeed(string step) =>
             new Tuple<List<byte[]>, int>(Cycle.Generate(step, 10, 5), 0);
         public static Tuple<List<byte[]>, int> HalfStepSlowSpeed(string step) =>
