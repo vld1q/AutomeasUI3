@@ -17,6 +17,14 @@ public partial class Program
         Nm1310 = 3,
         Nm1550 = 5
     }
+    public static ObservableCollection<double?> MakeMeasurement(Mcu mcu, int numberOfMeasurements = 1)
+    {
+        var result = new ObservableCollection<double?>();
+        for (var i = 0; i < numberOfMeasurements; i++) result.Add(null);
+
+        //for (var i = 0; i < numberOfMeasurements; i++) result[i] = SingularMeasurement(mcu);
+        return result;
+    }
 }
 
         
