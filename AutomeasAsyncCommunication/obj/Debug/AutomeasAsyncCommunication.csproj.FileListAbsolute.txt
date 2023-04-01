@@ -19,3 +19,10 @@ C:\Users\Admin\RiderProjects\AutomeasUI2\AutomeasAsyncCommunication\obj\Debug\Au
 C:\Users\Admin\RiderProjects\AutomeasUI2\AutomeasAsyncCommunication\obj\Debug\AutomeasAsyncCommunication.csproj.CoreCompileInputs.cache
 C:\Users\Admin\RiderProjects\AutomeasUI2\AutomeasAsyncCommunication\obj\Debug\AutomeasAsyncCommunication.exe
 C:\Users\Admin\RiderProjects\AutomeasUI2\AutomeasAsyncCommunication\obj\Debug\AutomeasAsyncCommunication.pdb
+C:\Users\iningrum\RiderProjects\AutomeasUIR\AutomeasAsyncCommunication\bin\Debug\AutomeasAsyncCommunication.exe
+C:\Users\iningrum\RiderProjects\AutomeasUIR\AutomeasAsyncCommunication\bin\Debug\AutomeasAsyncCommunication.pdb
+C:\Users\iningrum\RiderProjects\AutomeasUIR\AutomeasAsyncCommunication\obj\Debug\AutomeasAsyncCommunication.csproj.AssemblyReference.cache
+C:\Users\iningrum\RiderProjects\AutomeasUIR\AutomeasAsyncCommunication\obj\Debug\AutomeasAsyncCommunication.csproj.SuggestedBindingRedirects.cache
+C:\Users\iningrum\RiderProjects\AutomeasUIR\AutomeasAsyncCommunication\obj\Debug\AutomeasAsyncCommunication.csproj.CoreCompileInputs.cache
+C:\Users\iningrum\RiderProjects\AutomeasUIR\AutomeasAsyncCommunication\obj\Debug\AutomeasAsyncCommunication.exe
+C:\Users\iningrum\RiderProjects\AutomeasUIR\AutomeasAsyncCommunication\obj\Debug\AutomeasAsyncCommunication.pdb

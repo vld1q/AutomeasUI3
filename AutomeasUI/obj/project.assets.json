@@ -1037,19 +1037,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Admin\\.nuget\\packages\\": {}
+    "C:\\Users\\iningrum\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasUI\\AutomeasUI.csproj",
+      "projectUniqueName": "C:\\Users\\iningrum\\RiderProjects\\AutomeasUIR\\AutomeasUI\\AutomeasUI.csproj",
       "projectName": "AutomeasUI",
-      "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasUI\\AutomeasUI.csproj",
-      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasUI\\obj\\",
+      "projectPath": "C:\\Users\\iningrum\\RiderProjects\\AutomeasUIR\\AutomeasUI\\AutomeasUI.csproj",
+      "packagesPath": "C:\\Users\\iningrum\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\iningrum\\RiderProjects\\AutomeasUIR\\AutomeasUI\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\iningrum\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1063,14 +1068,14 @@
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
           "projectReferences": {
-            "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj": {
-              "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj"
+            "C:\\Users\\iningrum\\RiderProjects\\AutomeasUIR\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj": {
+              "projectPath": "C:\\Users\\iningrum\\RiderProjects\\AutomeasUIR\\AutomeasAsyncCommunication\\AutomeasAsyncCommunication.csproj"
             },
-            "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasToolkit\\AutomeasToolkit.csproj": {
-              "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\AutomeasToolkit\\AutomeasToolkit.csproj"
+            "C:\\Users\\iningrum\\RiderProjects\\AutomeasUIR\\AutomeasToolkit\\AutomeasToolkit.csproj": {
+              "projectPath": "C:\\Users\\iningrum\\RiderProjects\\AutomeasUIR\\AutomeasToolkit\\AutomeasToolkit.csproj"
             },
-            "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj": {
-              "projectPath": "C:\\Users\\Admin\\RiderProjects\\AutomeasUI2\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj"
+            "C:\\Users\\iningrum\\RiderProjects\\AutomeasUIR\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj": {
+              "projectPath": "C:\\Users\\iningrum\\RiderProjects\\AutomeasUIR\\PseudoassemblyLanguage\\PseudoassemblyLanguage.csproj"
             }
           }
         }
@@ -1117,7 +1122,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   }
