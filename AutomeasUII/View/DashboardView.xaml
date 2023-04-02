@@ -6,29 +6,28 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewm="clr-namespace:AutomeasUII.ViewModel"
              d:DataContext="{d:DesignInstance viewm:DashboardViewModel}"
-             xmlns:local="clr-namespace:AutomeasUII.View"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="0.05*"/>
+            <RowDefinition Height="0.05*" />
             <RowDefinition Height="0.2*" />
         </Grid.RowDefinitions>
-            <lvc:CartesianChart
-                Series="{Binding Series, Mode=TwoWay}"
-                YAxes="{Binding YAxes}"
-                DrawMarginFrame="{Binding Frame}">
-            </lvc:CartesianChart>
-            <ProgressBar Grid.Row="1" Visibility="{Binding progressBarVisible}" Value="{Binding progressBarIndex.Value}" Maximum="{Binding progressBarMax.Value}" MinHeight="20"  Margin="20,0,20,0"/>
+        <lvc:CartesianChart
+            Series="{Binding Series, Mode=TwoWay}"
+            YAxes="{Binding YAxes}"
+            DrawMarginFrame="{Binding Frame}" />
+        <ProgressBar Grid.Row="1" Visibility="{Binding ProgressBarVisible}" Value="{Binding ProgressBarIndex.Value}"
+                     Maximum="{Binding ProgressBarMax.Value}" MinHeight="20" Margin="20,0,20,0" />
 
         <StackPanel Orientation="Horizontal"
                     Grid.Row="2"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
-            <Button Content="START" IsEnabled="{Binding isStartEnabled.Value}"
+            <Button Content="START" IsEnabled="{Binding IsStartEnabled.Value}"
                     Command="{Binding CommenceExperimentCommand}" Padding="10" Margin="10" />
-            <Button Content="STOP" IsEnabled="{Binding isStartEnabled.NotValue}"
+            <Button Content="STOP" IsEnabled="{Binding IsStartEnabled.NotValue}"
                     Command="{Binding HaltExperimentCommand}" Padding="10" Margin="10" />
         </StackPanel>
     </Grid>

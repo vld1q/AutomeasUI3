@@ -5,14 +5,12 @@ using System.Linq;
 using System.Threading;
 
 namespace AutomeasUII.Core;
-
-public abstract class SerialDevice
-{
+// TODO fix ambiguity
+public abstract class SerialDevice{
     public readonly SerialPort Port;
-    protected bool IsDeactivated = false;
+    protected bool IsDeactivated;
 
-    public SerialDevice(string port, int baudrate)
-    {
+    public SerialDevice(string port, int baudrate){
         Port = new SerialPort();
         {
             // _port settings
@@ -28,52 +26,43 @@ public abstract class SerialDevice
     }
 
     /// <summary>
-    /// Make device not accept instructions.
+    ///     Make device not accept instructions.
     /// </summary>
-    public void Deactivate()
-    {
-        this.IsDeactivated = true;
+    public void Deactivate(){
+        IsDeactivated = true;
     }
 
-    public static SerialDevice operator ++(SerialDevice self)
-    {
+    public static SerialDevice operator ++(SerialDevice self){
         if (!self.Port.IsOpen) self.Port.Open();
         return self;
     }
 
-    public static SerialDevice operator --(SerialDevice self)
-    {
+    public static SerialDevice operator --(SerialDevice self){
         if (self.Port.IsOpen) self.Port.Close();
         return self;
     }
 
-    public void SendRequest(string msg)
-    {
+    public void SendRequest(string msg){
         if (Port.IsOpen)
             Port.WriteLine(msg);
         else
             throw new NotSupportedException("Port is not open");
     }
 
-    public string SendSafeRequest(string msg)
-    {
+    public string SendSafeRequest(string msg){
         if (Port.IsOpen)
             Port.WriteLine(msg);
-        string response = Port.ReadLine();
+        var response = Port.ReadLine();
         if (response != "") return response;
-        else
-            throw new NotSupportedException("Port is not open");
+        throw new NotSupportedException("Port is not open");
     }
 
-    public string GetResponse()
-    {
+    public string GetResponse(){
         string result;
-        try
-        {
+        try{
             result = Port.ReadLine();
         }
-        catch (TimeoutException)
-        {
+        catch (TimeoutException){
             result = "???";
         }
 
@@ -81,126 +70,48 @@ public abstract class SerialDevice
     }
 }
 
-public class Mcu : SerialDevice
-{
-    public Mcu(string port, int baudrate) : base(port, baudrate)
-    {
+public class Mcu : SerialDevice{
+    public Mcu(string port, int baudrate) : base(port, baudrate){
         Thread.Sleep(100);
         Port.Open();
     }
+    
 
-    public void Cycle()
-    {
-        if (IsDeactivated)
-        {
-            return;
-        }
+    
 
-        Port.DiscardInBuffer();
-        Port.DiscardOutBuffer();
-        var response = "";
-        //Thread.Sleep(3000);
-        string left, right;
-        left = "";
-        right = "";
-        var b = StringToByteArray("021E");
-        Port.Write(b, 0, 2);
-        var v = Port.ReadLine();
-        if (v != "y") throw new NotImplementedException();
-
-        b = StringToByteArray("031E");
-        Port.Write(b, 0, 2);
-        v = Port.ReadLine();
-        if (v != "y") throw new NotImplementedException();
-        b = StringToByteArray("0001");
-        Port.Write(b, 0, 2);
-        v = Port.ReadLine();
-        if (v != "y") throw new NotImplementedException();
-        /*Port.WriteLine("l065x\0");
-        while(response != "done") 
-            response = Port.ReadLine();
-        Thread.Sleep(1500);
-        if (response == "done") Console.WriteLine("MOVE LEFT SUCCESSFUL");
-        SendRequest("r075x");
-        response = GetResponse();
-        Thread.Sleep(1500);
-        if (response == "done") Console.WriteLine("MOVE RIGHT SUCCESSFUL");*/
-    }
-
-    public void Cycle(List<byte[]> exe)
-    {
-        if (IsDeactivated)
-        {
-            return;
-        }
+    public void Cycle(List<byte[]> exe, List<byte[]> exe2, int delay){
+        if (IsDeactivated) return;
 
         Port.DiscardInBuffer();
         Port.DiscardOutBuffer();
-        var b = exe[0];
-        Port.Write(b, 0, 2);
-        var v = Port.ReadLine();
-        if (v != "y") throw new NotImplementedException();
-
-        b = exe[1];
-        Port.Write(b, 0, 2);
-        v = Port.ReadLine();
-        if (v != "y") throw new NotImplementedException();
-        b = StringToByteArray("0001");
-        Port.Write(b, 0, 2);
-        v = Port.ReadLine();
-        if (v != "y") throw new NotImplementedException();
-        /*Port.WriteLine("l065x\0");
-        while(response != "done") 
-            response = Port.ReadLine();
-        Thread.Sleep(1500);
-        if (response == "done") Console.WriteLine("MOVE LEFT SUCCESSFUL");
-        SendRequest("r075x");
-        response = GetResponse();
-        Thread.Sleep(1500);
-        if (response == "done") Console.WriteLine("MOVE RIGHT SUCCESSFUL");*/
-    }
-    public void Cycle(List<byte[]> exe, List<byte[]> exe2, int delay )
-    {
-        if (IsDeactivated)
-        {
-            return;
-        }
-
-        Port.DiscardInBuffer();
-        Port.DiscardOutBuffer();
-        foreach (byte[] instruction in exe)
-        {
+        foreach (var instruction in exe){
             Port.Write(instruction, 0, 2);
             var v = Port.ReadLine();
             if (v != "y") throw new Exception();
         }
+
         Thread.Sleep(delay);
-        foreach (byte[] instruction in exe2)
-        {
+        foreach (var instruction in exe2){
             Port.Write(instruction, 0, 2);
             var v = Port.ReadLine();
             if (v != "y") throw new Exception();
         }
     }
-    public void Cycle(List<byte[]> exe, int delay )
-    {
-        if (IsDeactivated)
-        {
-            return;
-        }
+
+    public void Cycle(List<byte[]> exe, int delay){
+        if (IsDeactivated) return;
 
         Port.DiscardInBuffer();
         Port.DiscardOutBuffer();
-        foreach (byte[] instruction in exe)
-        {
+        foreach (var instruction in exe){
             Port.Write(instruction, 0, 2);
             var v = Port.ReadLine();
             if (v != "y") throw new Exception();
-            if(delay>0) Thread.Sleep(delay);
+            if (delay > 0) Thread.Sleep(delay);
         }
     }
-    public static byte[] StringToByteArray(string hex)
-    {
+
+    public static byte[] StringToByteArray(string hex){
         return Enumerable.Range(0, hex.Length)
             .Where(x => x % 2 == 0)
             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
@@ -208,12 +119,10 @@ public class Mcu : SerialDevice
     }
 }
 
-public class Gauge : SerialDevice
-{
+public class Gauge : SerialDevice{
     private const string IntToCommand = "BRA3_5";
 
-    public Gauge(string port) : base(port, 300)
-    {
+    public Gauge(string port) : base(port, 300){
         /*_port.PortName = port;
         _port.BaudRate = baudrate;
         _port.Parity = Parity.None;
@@ -229,14 +138,12 @@ public class Gauge : SerialDevice
         Port.Open();
     }
 
-    private string ParseMeasurement_MakeNumeric(string measurement, Program.MeasurementType mMode)
-    {
-        string result = "";
+    private string ParseMeasurement_MakeNumeric(string measurement, Program.MeasurementType mMode){
+        var result = "";
         int prefix, postfix;
         prefix = postfix = 0;
         // TODO refactor, make better parsing
-        switch (mMode)
-        {
+        switch (mMode){
             case Program.MeasurementType.BrMeasDb: // BR=-57.8dB   1.5
                 prefix = "BR=-".Length;
                 postfix = "dB   1.5\r".Length;
@@ -250,25 +157,21 @@ public class Gauge : SerialDevice
                 break;
             case Program.MeasurementType.PowerMeasDbm: // P<-50.00dBm  1.3
                 prefix = "P<-".Length;
-                postfix = "dBm  1.3\r".Length; 
+                postfix = "dBm  1.3\r".Length;
                 break;
             default:
                 throw new NotSupportedException("Invalid string or unsupported measurement type");
         }
 
-        if (measurement[prefix - 1] != '-')
-        {
-            prefix--;
-        }
+        if (measurement[prefix - 1] != '-') prefix--;
 
         result = measurement.Substring(prefix);
         result = result.Substring(0, result.Length - postfix);
         return result;
     }
 
-    public string GetMeasurement(Program.MeasurementType mMode, int sleep)
-    {
-        string result = SendSafeRequest("G");
+    public string GetMeasurement(Program.MeasurementType mMode, int sleep){
+        var result = SendSafeRequest("G");
         result = ParseMeasurement_MakeNumeric(result, mMode);
         Port.DiscardInBuffer();
         Port.Close();
@@ -277,8 +180,7 @@ public class Gauge : SerialDevice
         return result;
     }
 
-    public void SetMode(Program.MeasurementType mMode)
-    {
+    public void SetMode(Program.MeasurementType mMode){
         var mode = (int)mMode;
         var measMode = IntToCommand[mode];
         SendSafeRequest(measMode.ToString());

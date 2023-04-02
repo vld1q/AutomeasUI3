@@ -2,10 +2,8 @@
 
 namespace AutomeasUII.View;
 
-public partial class DashboardView : UserControl
-{
-    public DashboardView()
-    {
+public partial class DashboardView : UserControl{
+    public DashboardView(){
         InitializeComponent();
     }
 }

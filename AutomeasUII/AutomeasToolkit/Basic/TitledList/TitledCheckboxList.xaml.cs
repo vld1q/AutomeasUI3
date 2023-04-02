@@ -4,8 +4,7 @@ using System.Windows.Controls;
 
 namespace AutomeasUII.AutomeasToolkit.Basic.TitledList;
 
-public partial class TitledCheckboxList : UserControl
-{
+public partial class TitledCheckboxList : UserControl{
     public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string),
         typeof(TitledCheckboxList), new PropertyMetadata(default(string)));
 
@@ -13,19 +12,16 @@ public partial class TitledCheckboxList : UserControl
         typeof(ObservableCollection<Checkbox>), typeof(TitledCheckboxList),
         new PropertyMetadata(default(ObservableCollection<Checkbox>)));
 
-    public TitledCheckboxList()
-    {
+    public TitledCheckboxList(){
         InitializeComponent();
     }
 
-    public string Title
-    {
+    public string Title{
         get => (string)GetValue(TitleProperty);
         set => SetValue(TitleProperty, value);
     }
 
-    public ObservableCollection<Checkbox> Checkboxes
-    {
+    public ObservableCollection<Checkbox> Checkboxes{
         get => (ObservableCollection<Checkbox>)GetValue(CheckboxesProperty);
         set => SetValue(CheckboxesProperty, value);
     }

@@ -4,14 +4,11 @@ using System.Windows.Data;
 
 namespace AutomeasUII.AutomeasToolkit.Basic.TitledList.Converters;
 
-public class CheckboxListConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
+public class CheckboxListConverter : IValueConverter{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture){
         var element = value as CheckboxCollection;
         var list = value as TitledList;
-        if (element != null && list != null)
-        {
+        if (element != null && list != null){
             element.Name = list.Name;
             return element;
         }
@@ -19,8 +16,7 @@ public class CheckboxListConverter : IValueConverter
         throw new NotSupportedException("Type conversion failed");
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture){
         throw new NotImplementedException();
     }
 }

@@ -4,20 +4,15 @@ using System.Windows.Controls;
 
 namespace AutomeasUII.AutomeasToolkit.Basic.TitledList;
 
-public class TitledListSelector : DataTemplateSelector
-{
-    private readonly Dictionary<string, string> avalibleUiElements = new()
-    {
+public class TitledListSelector : DataTemplateSelector{
+    private readonly Dictionary<string, string> _availableUiElements = new(){
         { "check", "TitledCheckboxListDataTemplate" },
         { "combo", "TitledComboListDataTemplate" }
     };
 
-    public override DataTemplate SelectTemplate(object item, DependencyObject container)
-    {
-        var element = container as FrameworkElement;
-        var cs = item as TitledList;
-        if (element != null && item != null && cs != null)
-            return element.FindResource(avalibleUiElements[cs.Type]) as DataTemplate;
+    public override DataTemplate? SelectTemplate(object item, DependencyObject container){
+        if (container is FrameworkElement element && item is TitledList cs)
+            return element.FindResource(_availableUiElements[cs.Type]) as DataTemplate;
 
         return null;
     }
