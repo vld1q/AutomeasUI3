@@ -9,7 +9,8 @@ public static class ConfigBar{
     public static Dictionary<string, ObservableCollection<TitledList>> Collumns{ get; set; } = new(){
         {
             "TypRuchuLeft", new ObservableCollection<TitledList>{
-                Combobox.Generator.GetList("Typ pomiaru", new[]{ "IL", "BR", "Power" }),
+                Checkbox.Generator.GetList("Typ pomiaru", new[]{ "IL", "BR", "Power" }),
+                Checkbox.Generator.GetList("Lambda", new[]{ "1310 nm", "1550 nm" }),
                 Combobox.Generator.GetList("Ilość wykonań", new[]{ "5", "50", "500", "1000", "2000", "3000", "5000" })
             }
         },{

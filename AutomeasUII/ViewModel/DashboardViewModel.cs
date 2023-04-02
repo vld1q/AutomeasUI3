@@ -20,12 +20,10 @@ using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using Microsoft.Win32;
 using PseudoassemblyLanguage.ScriptGenerator;
 using SkiaSharp;
-
 namespace AutomeasUII.ViewModel;
 
 public class DashboardViewModel : ObservableObject{
     
-
     private readonly ObservableCollection<ObservableValue?> _trace1310 = new()
         { null, null, null, null, null, null, null, null, null, null, null, null };
 
@@ -113,17 +111,12 @@ public class DashboardViewModel : ObservableObject{
     ///     Execute instructions determined by the user via UI
     /// </summary>
     public void CommenceExperiment(){
+        Mcu mcu;
+        Gauge gauge;
         IsStartEnabled.Value = false;
         ProgressBarIndex.Value = 0;
-        for (var i = 0; i < 15; i++){ // empty both traces
-            _trace1310.RemoveAt(0);
-            _trace1310.Add(null);
-            _trace1550.RemoveAt(0);
-            _trace1550.Add(null);
-        }
-
-        AutoScaleGraph();
-
+        ProgressBarVisible.Value = Visibility.Visible;
+        #region auxillary functions
         bool TaskCancelled(){
             try{
                 Token.ThrowIfCancellationRequested();
@@ -138,10 +131,6 @@ public class DashboardViewModel : ObservableObject{
 
             return false;
         }
-
-        Mcu mcu;
-        Gauge gauge;
-
         bool VerifyDisplayErrorIfFails(Action operation, string title, string msg = ""){
             try{
                 operation();
@@ -194,18 +183,28 @@ public class DashboardViewModel : ObservableObject{
             if (delayMs > 0) Thread.Sleep(delayMs);
             return gauge.GetMeasurement(mMode, 300);
         }
-
+        #endregion
         // ------------------------------------------------------------------------------
-        ProgressBarVisible.Value = Visibility.Visible;
-        // 0. import relevant settings
+        #region get all settings from ui
         Dictionary<string, object> settings = new(){
             { "step", ((Combobox)ConfigBar.Collumns["TypRuchuRight"][0]).GetValue() },
-            { "repeats", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][1]).GetValue() },
-            { "type", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][0]).GetValue() }
+            { "repeats", ((Combobox)ConfigBar.Collumns["TypRuchuLeft"][2]).GetValue() }
         };
+        var measSettings = new MeasSequence(){
+            Lambda1310 = new(((CheckboxCollection)ConfigBar.Collumns["TypRuchuLeft"][1]).Content[0].Checked),
+            Lambda1550 = new(((CheckboxCollection)ConfigBar.Collumns["TypRuchuLeft"][1]).Content[1].Checked),
+            MeasIL = new(((CheckboxCollection)ConfigBar.Collumns["TypRuchuLeft"][0]).Content[0].Checked),
+            MeasBR = new(((CheckboxCollection)ConfigBar.Collumns["TypRuchuLeft"][0]).Content[1].Checked),
+            MeasPower = new(((CheckboxCollection)ConfigBar.Collumns["TypRuchuLeft"][0]).Content[2].Checked),
+        };
+        measSettings.GenerateLists();
         ProgressBarMax.Value = Convert.ToUInt16(settings["repeats"]);
-        //List<byte[]> exe;
+        #endregion
+        #region check for errors
         var errors = false;
+        errors |= VerifyDisplayErrorIfFails(() => measSettings.CheckLambdas(), "No lambda has been selected");
+        errors |= VerifyDisplayErrorIfFails(() => measSettings.CheckMeasModes(), "No meas mode has been selected");
+        if (errors) return;
         errors |= VerifyDisplayErrorIfFails(() => {
             var value = ((Combobox)ConfigBar.Collumns["TypRuchuRight"][1]).GetValue();
             settings.Add("mcuCOM", value);
@@ -225,66 +224,64 @@ public class DashboardViewModel : ObservableObject{
             IsStartEnabled.Value = true;
             return;
         }
-
-        Thread.Sleep(3000);
-        gauge.SetMode(Program.MeasurementType.Nm1310);
-        Thread.Sleep(3000);
-        Program.MeasurementType measMode;
+        #endregion
         {
-            var tp = (string)settings["type"];
-            measMode = tp is "IL" ? Program.MeasurementType.IlMeasDbm :
-                tp is "BR" ? Program.MeasurementType.BrMeasDb :
-                Program.MeasurementType.PowerMeasDbm;
-        }
-        gauge.SetMode(measMode);
-        {
-            if (TaskCancelled()){
-                mcu.Port.Close();
-                gauge.Port.Close();
-                return;
-            } // exit thread
-
-            // 3. Execute
-            {
-                // 3.1 open file explorer, get file path.
-                var dialog = new SaveFileDialog();
-                dialog.Title = "Miejsce zapisu pomiarów";
-                dialog.DefaultExt = ".csv";
-                dialog.AddExtension = true;
-                dialog.ShowDialog();
-                var fileName = dialog.FileName;
-                if (fileName is ""){
-                    IsStartEnabled.Value = true;
-                    mcu.Port.Close();
-                    gauge.Port.Close();
-                    return; // exit thread
-                }
-
+            string fileName;
+            #region get fileName
+            { // 1. get target directory
                 if (TaskCancelled()){
                     mcu.Port.Close();
                     gauge.Port.Close();
                     return;
                 } // exit thread
 
-                // 3.2 start doing measurments
-                int repeats = Convert.ToUInt16((string)settings["repeats"]);
-                for (var i = 0; i < _trace1310.Count; i++){
-                    _trace1310[i] = null;
-                    _trace1550[i] = null;
+                {
+                    // 3.1 open file explorer, get file path.
+                    var dialog = new SaveFileDialog();
+                    dialog.Title = "Miejsce zapisu pomiarów";
+                    dialog.DefaultExt = ".csv";
+                    dialog.AddExtension = true;
+                    dialog.ShowDialog();
+                    fileName = dialog.FileName;
+                    if (fileName is ""){
+                        IsStartEnabled.Value = true;
+                        mcu.Port.Close();
+                        gauge.Port.Close();
+                        return; // exit thread
+                    }
+
+                    if (TaskCancelled()){
+                        mcu.Port.Close();
+                        gauge.Port.Close();
+                        return;
+                    } // exit thread
                 }
+            }
+            #endregion
+            int repeats = Convert.ToUInt16((string)settings["repeats"]);
+            using (var fs =
+                   new FileStream(fileName,
+                       FileMode.Append, FileAccess.Write, FileShare.None))
+            using (var fw = new StreamWriter(fs)){
+                foreach (var mode in measSettings.Modes){
+                    gauge.SetMode(mode);
+                    for (var i = 0; i < _trace1310.Count; i++){ // clear trace
+                        _trace1310[i] = null;
+                    }
 
-                using (var fs =
-                       new FileStream(fileName,
-                           FileMode.Create, FileAccess.Write, FileShare.None))
-                using (var fw = new StreamWriter(fs)){
-                    fw.WriteLine($"[{settings["type"]}]; [1310nm]; [1550nm]");
-                    for (var i = 0; i < repeats; i++){
-                        // meas1
-                        var valueNm1310 = FailsafeMeasurementAlgorithm(() => {
-                                //gauge.SetMode(Program.MeasurementType.BrMeasDb);
-                                Thread.Sleep(500);
-                                gauge.SetMode(Program.MeasurementType.Nm1310);
-                            },
+                    Thread.Sleep(3000);
+                    if (measSettings.Lambda1310.Value == true){
+                        fw.WriteLine("");
+                        fw.WriteLine($"Lambda 1310nm;{nameof(mode)}");
+                        fw.WriteLine($"[No];[Value]");
+                        gauge.SetMode(Program.MeasurementType.Nm1310);
+                        Thread.Sleep(3000);
+                        for (int i = 0; i < repeats; i++){
+                            // meas
+                            #region meas algorithm
+                            var valueNm1310 = FailsafeMeasurementAlgorithm(() => {
+                                    return;
+                                },
                             () => {
                                 var step = (string)settings["step"];
                                 var interval = step is "full" ? 30 : 60;
@@ -308,20 +305,31 @@ public class DashboardViewModel : ObservableObject{
                                 }
 
                                 if (fail) return;
-                            }, measMode);
-                        var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
-                        if (TaskCancelled()){
-                            mcu.Port.Close();
-                            gauge.Port.Close();
-                            return;
-                        } // exit thread
+                            }, mode);
+                            var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
+                            _trace1310.RemoveAt(0);
+                            _trace1310.Add(new ObservableValue(result1310));
+                            fw.WriteLine($"{i};{result1310}");
+                            AutoScaleGraph();
+                            if (TaskCancelled()){
+                                mcu.Port.Close();
+                                gauge.Port.Close();
+                                return;
+                            } // exit thread
+                            #endregion
 
-                        // meas2
-                        var valueNm1550 = FailsafeMeasurementAlgorithm(() => {
-                                //gauge.SetMode(Program.MeasurementType.IlMeasDbm);
-                                Thread.Sleep(500);
-                                gauge.SetMode(Program.MeasurementType.Nm1550);
-                            },
+                        }
+                    }
+
+                    if (measSettings.Lambda1550.Value == true){
+                        gauge.SetMode(Program.MeasurementType.Nm1550);
+                        Thread.Sleep(3000);
+                        for (int i = 0; i < repeats; i++){
+                            // meas
+                            #region meas algorithm
+                            var valueNm1310 = FailsafeMeasurementAlgorithm(() => {
+                                    return;
+                                },
                             () => {
                                 var step = (string)settings["step"];
                                 var interval = step is "full" ? 30 : 60;
@@ -345,31 +353,24 @@ public class DashboardViewModel : ObservableObject{
                                 }
 
                                 if (fail) return;
-                            }, measMode);
-                        var result1550 = Convert.ToDouble(valueNm1550, CultureInfo.InvariantCulture);
-                        if (TaskCancelled()){
-                            mcu.Port.Close();
-                            gauge.Port.Close();
-                            return;
-                        } // exit thread
-
-                        // sync both trends at the same time
-                        _trace1310.RemoveAt(0);
-                        _trace1310.Add(new ObservableValue(result1310));
-                        _trace1550.RemoveAt(0);
-                        _trace1550.Add(new ObservableValue(result1550 + 1));
-                        fw.WriteLine($"{i}; {result1310}; {result1550}");
-                        AutoScaleGraph();
-                        ProgressBarIndex.Value++;
-                        if (TaskCancelled()){
-                            mcu.Port.Close();
-                            gauge.Port.Close();
-                            return;
-                        } // exit thread
+                            }, mode);
+                            var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
+                            _trace1310.RemoveAt(0);
+                            _trace1310.Add(new ObservableValue(result1310));
+                            fw.WriteLine($"{i};{result1310}");
+                            AutoScaleGraph();
+                            if (TaskCancelled()){
+                                mcu.Port.Close();
+                                gauge.Port.Close();
+                                return;
+                            } // exit thread
+                            #endregion
+                        }
                     }
                 }
             }
         }
+        // end
         IsStartEnabled.Value = true;
         ProgressBarVisible.Value = Visibility.Hidden;
         mcu.Port.Close();
@@ -378,5 +379,45 @@ public class DashboardViewModel : ObservableObject{
 
     public void HaltExperiment(){
         Source.Cancel();
+    }
+}
+
+public class MeasSequence{
+    public ObservableBool Lambda1310{ get; set; } = new(false);
+    public ObservableBool Lambda1550{ get; set; } = new(false);
+    public ObservableBool MeasPower{ get; set; } = new(false);
+    public ObservableBool MeasBR{ get; set; } = new(false);
+    public ObservableBool MeasIL{ get; set; } = new(false);
+    public readonly List<Program.MeasurementType> Lambdas = new();
+    public readonly List<Program.MeasurementType> Modes = new();
+    public void GenerateLists(){
+        // lambda
+        if (Lambda1550.Value == true) Lambdas.Add(Program.MeasurementType.Nm1550);
+        if (Lambda1310.Value == true) Lambdas.Add(Program.MeasurementType.Nm1310);
+        // meas mode
+        if (MeasIL.Value == true) Modes.Add(Program.MeasurementType.IlMeasDbm);
+        if (MeasBR.Value == true) Modes.Add(Program.MeasurementType.BrMeasDb);
+        if (MeasPower.Value == true) Modes.Add(Program.MeasurementType.PowerMeasDbm);
+    }
+
+    public void CheckLambdas(){
+        bool anyLambdaSet = (Lambda1310.Value ?? false | Lambda1550.Value ?? false);
+        if (anyLambdaSet == false){
+            throw new Exception("No value selected");
+        }
+    }
+
+    public void CheckMeasModes(){
+        bool anyModeSet = (MeasIL.Value ?? false | MeasBR.Value ?? false | MeasPower.Value ?? false);
+        if (anyModeSet == false){
+            throw new Exception("No value selected");
+        }
+    }
+    public void ClearAll(){
+        Lambda1550.Value = false;
+        Lambda1550.Value = false;
+        MeasPower.Value = false;
+        MeasBR.Value = false;
+        MeasIL.Value = false;
     }
 }
