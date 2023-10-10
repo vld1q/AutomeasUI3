@@ -270,7 +270,7 @@ public class DashboardViewModel : ObservableObject{
                     }
 
                     Thread.Sleep(3000);
-                    if (measSettings.Lambda1310.Value == true){
+                    if (measSettings.Lambda1310.Value == true || measSettings.Lambda1550.Value == true){
                         fw.WriteLine("");
                         fw.WriteLine($"Lambda 1310nm;{nameof(mode)}");
                         fw.WriteLine($"[No];[Value]");
@@ -284,7 +284,7 @@ public class DashboardViewModel : ObservableObject{
                                 },
                             () => {
                                 var step = (string)settings["step"];
-                                var interval = step is "full" ? 30 : 60;
+                                var interval = step is "full" ? 20: 30;
                                 var left = Cycle.GenerateLeft(step, interval, 0);
                                 var right = Cycle.GenerateRight(step, interval, 0);
                                 var exe = Cycle.Preset.FullStepMidSpeed(step);
@@ -318,53 +318,6 @@ public class DashboardViewModel : ObservableObject{
                             } // exit thread
                             #endregion
 
-                        }
-                    }
-
-                    if (measSettings.Lambda1550.Value == true){
-                        gauge.SetMode(Program.MeasurementType.Nm1550);
-                        Thread.Sleep(3000);
-                        for (int i = 0; i < repeats; i++){
-                            // meas
-                            #region meas algorithm
-                            var valueNm1310 = FailsafeMeasurementAlgorithm(() => {
-                                    return;
-                                },
-                            () => {
-                                var step = (string)settings["step"];
-                                var interval = step is "full" ? 30 : 60;
-                                var left = Cycle.GenerateLeft(step, interval, 0);
-                                var right = Cycle.GenerateRight(step, interval, 0);
-                                var exe = Cycle.Preset.FullStepMidSpeed(step);
-                                var fail = false;
-                                switch (step){
-                                    case "half":
-                                    case "full":
-                                        fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(left, right, 500),
-                                            "Mcu USART fail", "Mcu did not respond \'y\' to a command");
-                                        break;
-                                    case "half_b":
-                                        fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(exe.Item1, exe.Item2),
-                                            "Mcu USART fail", "Mcu did not respond \'y\' to a command");
-                                        break;
-                                    default:
-                                        fail = true;
-                                        break;
-                                }
-
-                                if (fail) return;
-                            }, mode);
-                            var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
-                            _trace1310.RemoveAt(0);
-                            _trace1310.Add(new ObservableValue(result1310));
-                            fw.WriteLine($"{i};{result1310}");
-                            AutoScaleGraph();
-                            if (TaskCancelled()){
-                                mcu.Port.Close();
-                                gauge.Port.Close();
-                                return;
-                            } // exit thread
-                            #endregion
                         }
                     }
                 }
@@ -400,15 +353,20 @@ public class MeasSequence{
         if (MeasPower.Value == true) Modes.Add(Program.MeasurementType.PowerMeasDbm);
     }
 
-    public void CheckLambdas(){
-        bool anyLambdaSet = (Lambda1310.Value ?? false | Lambda1550.Value ?? false);
+    public void CheckLambdas()
+    {
+        bool anyLambdaSet = Lambda1550.Value ?? false;
+        anyLambdaSet |= Lambda1310.Value ?? false;
         if (anyLambdaSet == false){
             throw new Exception("No value selected");
         }
     }
 
-    public void CheckMeasModes(){
-        bool anyModeSet = (MeasIL.Value ?? false | MeasBR.Value ?? false | MeasPower.Value ?? false);
+    public void CheckMeasModes()
+    {
+        bool anyModeSet = MeasIL.Value ?? false;
+        anyModeSet |= MeasPower.Value ?? false;
+        anyModeSet |= MeasBR.Value ?? false;
         if (anyModeSet == false){
             throw new Exception("No value selected");
         }
