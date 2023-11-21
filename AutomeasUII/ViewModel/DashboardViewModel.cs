@@ -288,8 +288,10 @@ public class DashboardViewModel : ObservableObject{
                             () => {
                                 var step = (string)settings["step"];
                                 var interval = step is "full" ? 30 : 60;
+                                interval -= 20;
                                 var left = Cycle.GenerateLeft(step, interval, 0);
                                 var right = Cycle.GenerateRight(step, interval, 0);
+                                var sRight = Cycle.GenerateRight(step, interval/5, 0);
                                 var exe = Cycle.Preset.FullStepMidSpeed(step);
                                 var fail = false;
                                 switch (step){
@@ -306,7 +308,9 @@ public class DashboardViewModel : ObservableObject{
                                         fail = true;
                                         break;
                                 }
-
+                                if (fail) return;
+                                fail = VerifyDisplayErrorIfFails(() => mcu.Cycle(sRight, sRight, 500),
+                                    "Mcu USART fail", "Mcu did not respond \'y\' to a command");
                                 if (fail) return;
                             }, measMode);
                         var result1310 = Convert.ToDouble(valueNm1310, CultureInfo.InvariantCulture);
@@ -316,17 +320,20 @@ public class DashboardViewModel : ObservableObject{
                             return;
                         } // exit thread
 
+                        //continue; // TODO
                         // meas2
                         var valueNm1550 = FailsafeMeasurementAlgorithm(() => {
-                                //gauge.SetMode(Program.MeasurementType.IlMeasDbm);
+                                //gauge.SetMode(Program.MeasurementType.BrMeasDb);
                                 Thread.Sleep(500);
                                 gauge.SetMode(Program.MeasurementType.Nm1550);
                             },
                             () => {
                                 var step = (string)settings["step"];
                                 var interval = step is "full" ? 30 : 60;
+                                interval -= 20;
                                 var left = Cycle.GenerateLeft(step, interval, 0);
                                 var right = Cycle.GenerateRight(step, interval, 0);
+                                var sRight = Cycle.GenerateRight(step, interval/5, 0);
                                 var exe = Cycle.Preset.FullStepMidSpeed(step);
                                 var fail = false;
                                 switch (step){
@@ -343,7 +350,6 @@ public class DashboardViewModel : ObservableObject{
                                         fail = true;
                                         break;
                                 }
-
                                 if (fail) return;
                             }, measMode);
                         var result1550 = Convert.ToDouble(valueNm1550, CultureInfo.InvariantCulture);

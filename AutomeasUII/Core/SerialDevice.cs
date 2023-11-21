@@ -97,6 +97,32 @@ public class Mcu : SerialDevice{
             if (v != "y") throw new Exception();
         }
     }
+    
+    public void Cycle(List<byte[]> exe, List<byte[]> exe2, List<byte[]> exe3, int delay){
+        if (IsDeactivated) return;
+
+        Port.DiscardInBuffer();
+        Port.DiscardOutBuffer();
+        foreach (var instruction in exe){
+            Port.Write(instruction, 0, 2);
+            var v = Port.ReadLine();
+            if (v != "y") throw new Exception();
+        }
+
+        Thread.Sleep(delay);
+        foreach (var instruction in exe2){
+            Port.Write(instruction, 0, 2);
+            var v = Port.ReadLine();
+            if (v != "y") throw new Exception();
+        }
+        
+        Thread.Sleep(delay);
+        foreach (var instruction in exe3){
+            Port.Write(instruction, 0, 2);
+            var v = Port.ReadLine();
+            if (v != "y") throw new Exception();
+        }
+    }
 
     public void Cycle(List<byte[]> exe, int delay){
         if (IsDeactivated) return;
